@@ -1,0 +1,1434 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Typeglot: typing practice in English, Chinese (pinyin), Japanese (romaji), Korean (romanization), French and Spanish.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%277%27 fill=%27%230d7a64%27/%3E%3Ctext x=%2716%27 y=%2722%27 font-size=%2718%27 text-anchor=%27middle%27 fill=%27white%27 font-family=%27sans-serif%27%3ET%3C/text%3E%3C/svg%3E">
+<title>Typeglot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500&family=IBM+Plex+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Instrument+Serif:ital@0;1&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Sans+JP:wght@400;500&family=Noto+Sans+KR:wght@400;500&family=Noto+Serif+SC:wght@400;600&family=Noto+Serif+JP:wght@400&family=Noto+Serif+KR:wght@400&display=swap">
+<style>
+/* Layout: one centered column — header, config strip, a typing stage of N lines, results replace the stage.
+   Six presets (data-style) + a custom layer written as inline tokens on :root. */
+:root {
+  --bg:#f4f5f3; --surface:#ffffff; --fg:#1b201e; --dim:#a7aeaa; --muted:#68716d;
+  --accent:#0d7a64; --accent-ink:#ffffff; --error:#d63b3b; --error-bg:rgba(214,59,59,.13); --line:#e1e4e1;
+  --panel:var(--surface); --panel-border:transparent; --panel-blur:0px; --panel-radius:8px;
+  --b1:#0d7a64; --b2:#7aa9ff; --b3:#ffb59a;
+  --ui-cjk:"Noto Sans SC"; --ui-cjk-serif:"Noto Serif SC";
+  --font-ui:var(--ui-cjk), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display:"DM Mono", var(--ui-cjk), ui-monospace, monospace;
+  --latin:"DM Mono"; --cjk-sc:"Noto Sans SC"; --cjk-jp:"Noto Sans JP"; --cjk-kr:"Noto Sans KR";
+  --text-size:1.65rem; --radius:8px; --mark-radius:7px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:#141716; --surface:#1c201f; --fg:#e7ebe9; --dim:#4f5754; --muted:#8d9692;
+    --accent:#4ed6b4; --accent-ink:#0f1513; --error:#ff6b6b; --error-bg:rgba(255,107,107,.16); --line:#2a302e;
+    --b1:#4ed6b4; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:#141716; --surface:#1c201f; --fg:#e7ebe9; --dim:#4f5754; --muted:#8d9692;
+  --accent:#4ed6b4; --accent-ink:#0f1513; --error:#ff6b6b; --error-bg:rgba(255,107,107,.16); --line:#2a302e;
+  --b1:#4ed6b4; color-scheme: dark;
+}
+
+/* 画廊 Gallery — museum wall, editorial serif, Klein blue */
+:root[data-style="gallery"] {
+  --bg:#f1f1ee; --surface:#ffffff; --fg:#0f0f10; --dim:#bdbdb7; --muted:#6b6b67;
+  --accent:#1335b8; --accent-ink:#ffffff; --error:#d23c2c; --error-bg:rgba(210,60,44,.1); --line:#d6d6d0;
+  --panel:transparent; --panel-border:transparent; --panel-radius:0;
+  --font-ui:"Manrope", var(--ui-cjk), sans-serif;
+  --font-display:"Instrument Serif", "Noto Serif SC", serif;
+  --latin:"Fraunces"; --cjk-sc:"Noto Serif SC"; --cjk-jp:"Noto Serif JP"; --cjk-kr:"Noto Serif KR";
+  --text-size:2rem; --radius:0; --mark-radius:50%; color-scheme:light;
+}
+/* 曜石 Obsidian — black stone, ivory serif, champagne gold */
+:root[data-style="obsidian"] {
+  --bg:#0b0b0d; --surface:#141416; --fg:#efe8da; --dim:#4c4840; --muted:#9a9284;
+  --accent:#cfae6e; --accent-ink:#0b0b0d; --error:#e2735e; --error-bg:rgba(226,115,94,.15); --line:#26241f;
+  --panel:transparent; --panel-border:#26241f; --panel-radius:0;
+  --b1:#cfae6e; --b2:#5c4a2a; --b3:#2a2620;
+  --font-ui:"Manrope", var(--ui-cjk), sans-serif;
+  --font-display:"Cormorant Garamond", "Noto Serif SC", serif;
+  --latin:"Cormorant Garamond"; --cjk-sc:"Noto Serif SC"; --cjk-jp:"Noto Serif JP"; --cjk-kr:"Noto Serif KR";
+  --text-size:2.25rem; --radius:0; --mark-radius:0; color-scheme:dark;
+}
+/* 极光 Aurora — night sky, drifting light, frosted glass */
+:root[data-style="aurora"] {
+  --bg:#060912; --surface:rgba(255,255,255,.05); --fg:#eef1fa; --dim:#3f4862; --muted:#8e98b4;
+  --accent:#7fe3d1; --accent-ink:#06121a; --error:#ff7a8a; --error-bg:rgba(255,122,138,.16); --line:rgba(255,255,255,.1);
+  --panel:rgba(255,255,255,.045); --panel-border:rgba(255,255,255,.09); --panel-blur:18px; --panel-radius:16px;
+  --b1:#1fb5a3; --b2:#5b4fe0; --b3:#b0408a;
+  --font-ui:"Manrope", var(--ui-cjk), sans-serif;
+  --font-display:"Manrope", "Noto Sans SC", sans-serif;
+  --latin:"JetBrains Mono";
+  --radius:10px; --mark-radius:10px; color-scheme:dark;
+}
+/* 晨雾 Dawn — pale morning haze, soft glass, italic serif */
+:root[data-style="dawn"] {
+  --bg:#f4f2f7; --surface:rgba(255,255,255,.62); --fg:#26212f; --dim:#bdb5c9; --muted:#766e85;
+  --accent:#b4466a; --accent-ink:#ffffff; --error:#d1432f; --error-bg:rgba(209,67,47,.12); --line:rgba(38,33,47,.1);
+  --panel:rgba(255,255,255,.55); --panel-border:rgba(255,255,255,.8); --panel-blur:20px; --panel-radius:18px;
+  --b1:#ffd0bd; --b2:#d9caff; --b3:#c4e4ff;
+  --font-ui:"Manrope", var(--ui-cjk), sans-serif;
+  --font-display:"Fraunces", "Noto Serif SC", serif;
+  --latin:"DM Mono";
+  --radius:12px; --mark-radius:50%; color-scheme:light;
+}
+/* 青瓷 Celadon — glaze green-grey, ink teal, wide-tracked serif */
+:root[data-style="celadon"] {
+  --bg:#dce5df; --surface:#e7eee9; --fg:#1b2a29; --dim:#98aea6; --muted:#53706a;
+  --accent:#1f5961; --accent-ink:#ffffff; --error:#a8432f; --error-bg:rgba(168,67,47,.12); --line:#bdccc4;
+  --panel:transparent; --panel-border:#bdccc4; --panel-radius:2px;
+  --font-ui:var(--ui-cjk-serif), serif;
+  --font-display:var(--ui-cjk-serif), "Noto Serif SC", serif;
+  --latin:"IBM Plex Mono"; --cjk-sc:"Noto Serif SC"; --cjk-jp:"Noto Serif JP"; --cjk-kr:"Noto Serif KR";
+  --radius:2px; --mark-radius:2px; color-scheme:light;
+}
+
+:root[data-ui="ja"] { --ui-cjk:"Noto Sans JP"; --ui-cjk-serif:"Noto Serif JP"; }
+:root[data-ui="ko"] { --ui-cjk:"Noto Sans KR"; --ui-cjk-serif:"Noto Serif KR"; }
+[hidden] { display:none !important; }
+html, body { height:100%; }
+body {
+  margin:0; background:var(--bg); color:var(--fg); font-family:var(--font-ui); font-size:15px;
+  transition:background-color .35s, color .35s;
+}
+:root[data-style="obsidian"] body { background:radial-gradient(ellipse 80% 50% at 50% -10%, rgba(207,174,110,.13), transparent 70%) var(--bg); }
+:root[data-style="celadon"] body { background:radial-gradient(circle at 15% 0%, rgba(255,255,255,.6), transparent 45%) var(--bg); }
+button, input, select, textarea { font:inherit; color:inherit; }
+:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+
+/* ambient layer */
+.fx { position:fixed; inset:0; z-index:-1; pointer-events:none; overflow:hidden; }
+.fx i { position:absolute; border-radius:50%; filter:blur(90px); opacity:0; transition:opacity .6s; }
+.fx .b1 { width:52vmax; height:52vmax; left:-14vmax; top:-22vmax; background:var(--b1); }
+.fx .b2 { width:46vmax; height:46vmax; right:-16vmax; top:8vmax; background:var(--b2); }
+.fx .b3 { width:40vmax; height:40vmax; left:22vmax; bottom:-26vmax; background:var(--b3); }
+:root[data-fx~="blobs"] .fx i { opacity:.42; animation:drift 26s ease-in-out infinite alternate; }
+:root[data-fx~="blobs"] .fx .b2 { animation-duration:32s; animation-direction:alternate-reverse; }
+:root[data-fx~="blobs"] .fx .b3 { animation-duration:38s; }
+:root[data-style="dawn"][data-fx~="blobs"] .fx i { opacity:.75; }
+.fx .grain {
+  position:absolute; inset:-50%; opacity:0;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .5  0 0 0 0 .5  0 0 0 0 .5  0 0 0 .55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+:root[data-fx~="grain"] .fx .grain { opacity:.14; }
+@keyframes drift { to { transform:translate(8vmax, 6vmax) scale(1.12); } }
+
+.app {
+  max-width:1060px; margin:0 auto; min-height:100%;
+  display:flex; flex-direction:column; gap:24px;
+  padding-block:28px 22px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+  box-sizing:border-box;
+}
+
+/* header */
+.top { display:flex; align-items:center; gap:14px; flex-wrap:wrap; transition:opacity .3s; }
+:root[data-style="gallery"] .top { padding-bottom:18px; border-bottom:1px solid var(--fg); }
+.brand { display:flex; align-items:center; gap:10px; margin-right:auto; }
+.mark {
+  display:inline-grid; place-items:center; width:30px; height:30px; font-size:1rem; flex:none;
+  background:var(--accent); color:var(--accent-ink); border-radius:var(--mark-radius); font-family:var(--font-ui); font-weight:600;
+}
+:root[data-style="obsidian"] .mark, :root[data-style="celadon"] .mark { background:transparent; color:var(--accent); border:1px solid var(--accent); }
+:root[data-style="aurora"] .mark { background:linear-gradient(135deg, var(--b1), var(--b2)); color:#fff; }
+:root[data-style="dawn"] .mark { background:linear-gradient(135deg, #f3a58a, var(--accent)); }
+.logo { font-family:var(--font-display); font-size:1.55rem; font-weight:500; letter-spacing:-.01em; line-height:1; }
+:root[data-style="gallery"] .logo { font-size:2.2rem; font-style:italic; font-weight:400; letter-spacing:-.02em; }
+:root[data-style="obsidian"] .logo { font-size:1.9rem; letter-spacing:.14em; text-transform:uppercase; font-weight:500; }
+:root[data-style="aurora"] .logo { font-weight:700; letter-spacing:-.03em; }
+:root[data-style="dawn"] .logo { font-size:1.9rem; font-style:italic; font-weight:400; }
+:root[data-style="celadon"] .logo { letter-spacing:.22em; font-weight:600; font-size:1.3rem; }
+.brand-sub { color:var(--muted); font-size:.82rem; letter-spacing:.06em; }
+
+.styles { display:flex; gap:4px; flex-wrap:wrap; }
+.sty {
+  display:flex; align-items:center; gap:7px; padding:5px 10px 5px 6px; cursor:pointer;
+  background:transparent; border:1px solid transparent; border-radius:999px; color:var(--muted); font-size:.82rem;
+}
+.sty:hover { color:var(--fg); }
+.sty[aria-pressed="true"] { border-color:var(--line); color:var(--fg); background:var(--panel); }
+.sw { width:18px; height:18px; border-radius:50%; flex:none; box-shadow:inset 0 0 0 1px rgba(128,128,128,.35); }
+.icon-btn {
+  display:flex; align-items:center; gap:6px; padding:6px 11px; border:1px solid var(--line);
+  background:transparent; border-radius:999px; cursor:pointer; color:var(--muted); font-size:.82rem;
+}
+.icon-btn:hover { color:var(--fg); }
+.icon-btn[aria-pressed="true"] { color:var(--accent); border-color:var(--accent); }
+.ui-lang { position:relative; display:flex; align-items:center; }
+.ui-lang svg { position:absolute; left:10px; width:15px; height:15px; pointer-events:none; color:var(--muted); fill:none; stroke:currentColor; stroke-width:1.7; }
+.ui-lang select {
+  appearance:none; -webkit-appearance:none; cursor:pointer; font-size:.82rem; color:var(--fg);
+  background:transparent; border:1px solid var(--line); border-radius:999px; padding:6px 12px 6px 30px;
+}
+.ui-lang select:hover { border-color:var(--accent); }
+.ui-lang option { background:var(--bg); color:var(--fg); }
+.icon-btn svg { width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+
+/* config strip */
+.config {
+  display:flex; flex-wrap:wrap; gap:8px 22px; align-items:center; padding:10px 14px;
+  background:var(--panel); border:1px solid var(--panel-border); border-radius:var(--panel-radius);
+  -webkit-backdrop-filter:blur(var(--panel-blur)); backdrop-filter:blur(var(--panel-blur));
+  transition:opacity .3s;
+}
+:root[data-style="gallery"] .config { padding:4px 0; }
+.grp { display:flex; align-items:center; gap:2px; flex-wrap:wrap; }
+.grp-l { color:var(--dim); font-size:.7rem; letter-spacing:.14em; margin-right:6px; text-transform:uppercase; }
+.opt {
+  background:transparent; border:0; padding:5px 9px; border-radius:999px; cursor:pointer;
+  color:var(--muted); font-size:.88rem; transition:color .15s, background-color .15s;
+}
+.opt:hover { color:var(--fg); }
+.opt[aria-pressed="true"] { color:var(--accent); font-weight:600; background:color-mix(in srgb, var(--accent) 12%, transparent); }
+:root[data-style="gallery"] .opt[aria-pressed="true"], :root[data-style="obsidian"] .opt[aria-pressed="true"], :root[data-style="celadon"] .opt[aria-pressed="true"] {
+  background:transparent; text-decoration:underline; text-decoration-thickness:1.5px; text-underline-offset:6px;
+}
+.opt.tog::before { content:"○ "; }
+.opt.tog[aria-pressed="true"]::before { content:"● "; }
+
+/* stage */
+.stage { position:relative; padding-block:30px 8px; cursor:text; }
+.live {
+  display:flex; align-items:baseline; gap:18px; min-height:2.2rem; margin-bottom:16px;
+  font-family:var(--font-display); font-variant-numeric:tabular-nums;
+}
+.live-main { font-size:1.9rem; color:var(--accent); line-height:1; }
+:root[data-style="gallery"] .live-main, :root[data-style="dawn"] .live-main { font-size:2.6rem; font-style:italic; }
+:root[data-style="obsidian"] .live-main { font-size:2.6rem; }
+.live-speed { color:var(--muted); font-size:1rem; font-family:var(--font-ui); }
+.live-unit { color:var(--dim); font-size:.75rem; margin-left:4px; letter-spacing:.08em; }
+.words {
+  position:relative; overflow:hidden; font-size:var(--text-size); line-height:1.35;
+  font-family:var(--latin), var(--cjk-sc), ui-monospace, monospace;
+  transition:filter .25s, opacity .25s;
+}
+.inner {
+  position:relative; display:flex; flex-wrap:wrap; align-items:flex-end; row-gap:.42em;
+  transition:transform .22s ease;
+}
+:root[data-align="center"] .inner { justify-content:center; }
+.w { display:inline-flex; flex-direction:column; align-items:flex-start; }
+.hint {
+  font-size:.56em; line-height:1.35; color:var(--muted); font-family:var(--cjk-sc), sans-serif;
+  white-space:nowrap; padding-left:.08em; padding-right:.4em; letter-spacing:.02em;
+}
+.words[data-lang="ja"] .hint { font-family:var(--cjk-jp), sans-serif; }
+.words[data-lang="ko"] .hint { font-family:var(--cjk-kr), sans-serif; }
+:root[data-style="obsidian"] .hint { font-size:.46em; }
+.cs { display:flex; }
+.c { white-space:pre; color:var(--dim); transition:color .07s; }
+.c.ok { color:var(--fg); }
+.c.bad { color:var(--error); text-decoration:underline; text-decoration-thickness:2px; text-underline-offset:.18em; }
+.c.sp.bad { background:var(--error-bg); }
+:root[data-style="aurora"] .c.ok { text-shadow:0 0 14px rgba(127,227,209,.25); }
+
+.caret {
+  position:absolute; left:0; top:0; width:2px; height:var(--ch, 1.3em); background:var(--accent);
+  border-radius:1px; pointer-events:none; z-index:2;
+  transition:left .09s cubic-bezier(.3,.7,.4,1), top .09s cubic-bezier(.3,.7,.4,1);
+}
+:root[data-smooth="off"] .caret { transition:none; }
+:root[data-caret="block"] .caret { width:var(--cw, .6em); opacity:.3; border-radius:3px; }
+:root[data-caret="underline"] .caret { width:var(--cw, .6em); height:2px; margin-top:calc(var(--ch, 1.3em) - 1px); }
+:root[data-caret="none"] .caret { visibility:hidden; }
+:root[data-style="aurora"] .caret { box-shadow:0 0 12px var(--accent); }
+.caret.idle { animation:blink 1.05s step-end infinite; }
+@keyframes blink { 50% { opacity:0; } }
+
+.comp {
+  position:absolute; z-index:5; padding:3px 9px; font-size:1rem; white-space:nowrap;
+  background:var(--fg); color:var(--bg); border-radius:6px; pointer-events:none; transform:translateY(-100%);
+}
+#ta {
+  position:absolute; left:0; top:0; width:3em; height:1.6em; opacity:0; padding:0; border:0;
+  resize:none; overflow:hidden; color:transparent; background:transparent; caret-color:transparent;
+  font-size:16px; z-index:-1;
+}
+.focus-hint {
+  position:absolute; inset:0; display:grid; place-items:center; pointer-events:none;
+  color:var(--fg); font-size:1rem; letter-spacing:.06em; opacity:0; transition:opacity .2s;
+}
+.stage:not(.focused) .focus-hint { opacity:1; }
+.stage:not(.focused) .words { filter:blur(5px); opacity:.5; }
+.stage:not(.focused) .caret { opacity:0; }
+
+.tip { color:var(--muted); font-size:.85rem; margin:0; line-height:1.6; max-width:65ch; }
+.tip.warn { color:var(--error); }
+kbd {
+  font-family:"DM Mono", ui-monospace, monospace; font-size:.78em; padding:1px 6px; border-radius:4px;
+  background:var(--surface); border:1px solid var(--line); color:var(--fg);
+}
+
+/* results */
+.results { display:flex; flex-direction:column; gap:24px; padding-block:6px; }
+.res-head { display:flex; flex-wrap:wrap; gap:14px 48px; align-items:flex-end; }
+.big { display:flex; flex-direction:column; gap:4px; }
+.big .lbl { color:var(--muted); font-size:.74rem; letter-spacing:.14em; text-transform:uppercase; }
+.big .num { font-family:var(--font-display); font-size:3.8rem; line-height:1; color:var(--accent); font-variant-numeric:tabular-nums; }
+:root[data-style="gallery"] .big .num, :root[data-style="dawn"] .big .num { font-size:5rem; font-style:italic; font-weight:400; }
+:root[data-style="obsidian"] .big .num { font-size:5rem; font-weight:500; }
+:root[data-style="aurora"] .big .num { font-weight:700; letter-spacing:-.04em; background:linear-gradient(120deg, var(--accent), #a9a2ff); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.big .num.sec { color:var(--fg); background:none; }
+.badge { align-self:center; padding:4px 12px; border-radius:999px; font-size:.8rem; background:var(--accent); color:var(--accent-ink); }
+.chart { width:100%; overflow-x:auto; }
+.chart svg { display:block; width:100%; min-width:420px; height:auto; }
+.chart .gl { stroke:var(--line); stroke-width:1; }
+.chart .ax { fill:var(--muted); font-size:11px; font-family:"DM Mono", ui-monospace, monospace; }
+.chart .l-sp { fill:none; stroke:var(--accent); stroke-width:2.5; stroke-linejoin:round; stroke-linecap:round; }
+.chart .a-sp { fill:var(--accent); opacity:.1; stroke:none; }
+.chart .l-raw { fill:none; stroke:var(--muted); stroke-width:1.5; stroke-dasharray:4 4; opacity:.7; }
+.chart .er { fill:var(--error); stroke:var(--bg); stroke-width:1.5; }
+.chart .end { fill:var(--accent); stroke:var(--bg); stroke-width:2; }
+.legend { display:flex; gap:18px; color:var(--muted); font-size:.78rem; flex-wrap:wrap; margin-top:6px; }
+.legend i { display:inline-block; width:14px; height:3px; vertical-align:middle; margin-right:6px; background:var(--accent); }
+.legend i.raw { background:repeating-linear-gradient(90deg, var(--muted) 0 4px, transparent 4px 7px); }
+.legend i.er { width:8px; height:8px; border-radius:50%; background:var(--error); }
+.res-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:16px; margin:0; }
+.res-grid div { display:flex; flex-direction:column; gap:3px; }
+.res-grid dt { color:var(--muted); font-size:.74rem; letter-spacing:.08em; }
+.res-grid dd { margin:0; font-family:var(--font-display); font-size:1.45rem; font-variant-numeric:tabular-nums; }
+.res-actions { display:flex; gap:10px; flex-wrap:wrap; }
+.btn {
+  padding:9px 18px; border-radius:999px; border:1px solid var(--accent); cursor:pointer;
+  background:var(--accent); color:var(--accent-ink); font-size:.9rem;
+}
+:root[data-style="gallery"] .btn, :root[data-style="obsidian"] .btn, :root[data-style="celadon"] .btn { border-radius:0; }
+.btn.ghost { background:transparent; color:var(--accent); }
+
+.keys { margin-top:auto; color:var(--dim); font-size:.8rem; display:flex; gap:16px; flex-wrap:wrap; }
+body.typing .top, body.typing .config, body.typing .tip:not(.warn), body.typing .keys { opacity:.1; }
+
+/* customizer drawer */
+.drawer {
+  position:fixed; top:0; right:0; bottom:0; z-index:40; width:min(380px, 100%); box-sizing:border-box;
+  background:var(--bg); border-left:1px solid var(--line); box-shadow:-24px 0 60px rgba(0,0,0,.12);
+  overflow-y:auto; display:flex; flex-direction:column; gap:22px;
+  padding:calc(20px + env(safe-area-inset-top, 0px)) max(20px, env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) 22px;
+}
+.dr-head { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.dr-head h2 { margin:0; font-family:var(--font-display); font-size:1.35rem; font-weight:500; }
+.dr-sec { display:flex; flex-direction:column; gap:10px; }
+.dr-sec > h3 { margin:0; font-size:.7rem; letter-spacing:.16em; color:var(--muted); font-weight:600; text-transform:uppercase; }
+.row { display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:.88rem; }
+.row label, .row > span { color:var(--fg); }
+.colors { display:grid; grid-template-columns:repeat(5, 1fr); gap:8px; }
+.colors label { display:flex; flex-direction:column; align-items:center; gap:5px; font-size:.72rem; color:var(--muted); cursor:pointer; }
+.colors input[type="color"] {
+  width:44px; height:44px; padding:0; border:1px solid var(--line); border-radius:50%; background:none; cursor:pointer; overflow:hidden;
+}
+.colors input[type="color"]::-webkit-color-swatch-wrapper { padding:0; }
+.colors input[type="color"]::-webkit-color-swatch { border:0; border-radius:50%; }
+.colors input[type="color"]::-moz-color-swatch { border:0; border-radius:50%; }
+.seg { display:flex; border:1px solid var(--line); border-radius:999px; padding:2px; gap:2px; flex-wrap:wrap; }
+.seg button { border:0; background:transparent; padding:5px 11px; border-radius:999px; cursor:pointer; color:var(--muted); font-size:.8rem; }
+.seg button[aria-pressed="true"] { background:var(--accent); color:var(--accent-ink); }
+.drawer select, .drawer input[type="text"] {
+  background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:7px 10px; font-size:.86rem; min-width:0;
+}
+.drawer select { max-width:200px; }
+.drawer input[type="range"] { accent-color:var(--accent); width:160px; }
+.code-row { display:flex; gap:8px; }
+.code-row input { flex:1; }
+.mini { border:1px solid var(--line); background:transparent; border-radius:8px; padding:7px 12px; cursor:pointer; font-size:.82rem; white-space:nowrap; }
+.mini:hover { border-color:var(--accent); color:var(--accent); }
+.note { color:var(--muted); font-size:.78rem; line-height:1.55; margin:0; }
+.note.ok { color:var(--accent); }
+.note.err { color:var(--error); }
+
+@media (max-width:1020px) {
+  .brand-sub { display:none; }
+}
+@media (max-width:640px) {
+  :root { --text-size:1.3rem; }
+  .icon-btn span { display:none; }
+  .app { gap:16px; padding-block:18px; }
+  .config { gap:6px 12px; padding:8px 10px; }
+  .big .num { font-size:2.8rem !important; }
+  .brand-sub { display:none; }
+  .sty span.nm { display:none; }
+  .drawer { width:100%; border-left:0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition:none !important; animation:none !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="fx" aria-hidden="true"><i class="b1"></i><i class="b2"></i><i class="b3"></i><div class="grain"></div></div>
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <span class="mark" id="mark" aria-hidden="true">字</span>
+      <span class="logo">Typeglot</span>
+      <span class="brand-sub" data-i18n="brandSub"></span>
+    </div>
+    <div class="styles" id="styles" role="group" data-i18n-aria="stylesLabel"></div>
+    <button class="icon-btn" id="customBtn" type="button" aria-expanded="false" data-i18n-title="drTitle">
+      <svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>
+      <span data-i18n="custom"></span>
+    </button>
+    <button class="icon-btn" id="soundBtn" type="button" aria-pressed="false" data-i18n-title="soundTitle">
+      <svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path id="soundWave" d="M16.5 8.5a5 5 0 0 1 0 7"/></svg>
+      <span data-i18n="sound"></span>
+    </button>
+    <label class="ui-lang" data-i18n-title="uiLang">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg>
+      <select id="uiLang" data-i18n-aria="uiLang"></select>
+    </label>
+  </header>
+
+  <nav class="config" id="config" data-i18n-aria="setupAria"></nav>
+
+  <main class="stage" id="stage">
+    <div class="live" aria-live="off">
+      <span class="live-main" id="liveMain">30</span>
+      <span class="live-speed" id="liveSpeed"></span>
+    </div>
+    <div class="words" id="words">
+      <div class="inner" id="inner"></div>
+    </div>
+    <div class="comp" id="comp" hidden></div>
+    <textarea id="ta" data-i18n-aria="typeHere" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"></textarea>
+    <div class="focus-hint" id="focusHint" data-i18n="focusHint"></div>
+  </main>
+
+  <p class="tip" id="tip"></p>
+
+  <section class="results" id="results" hidden data-i18n-aria="resultsAria">
+    <div class="res-head">
+      <div class="big"><span class="lbl" id="rUnit">WPM</span><span class="num" id="rSpeed">0</span></div>
+      <div class="big"><span class="lbl" data-i18n="accuracy"></span><span class="num sec" id="rAcc">0%</span></div>
+      <span class="badge" id="rBadge" hidden data-i18n="newRecord"></span>
+    </div>
+    <div>
+      <div class="chart" id="chart"></div>
+      <div class="legend"><span><i></i><span data-i18n="lgSpeed"></span></span><span><i class="raw"></i><span data-i18n="lgRaw"></span></span><span><i class="er"></i><span data-i18n="lgErr"></span></span></div>
+    </div>
+    <dl class="res-grid">
+      <div><dt data-i18n="raw"></dt><dd id="rRaw">0</dd></div>
+      <div id="rScriptWrap" hidden><dt data-i18n="script"></dt><dd id="rScript">0</dd></div>
+      <div><dt data-i18n="chars"></dt><dd id="rChars">0 / 0</dd></div>
+      <div><dt data-i18n="cons"></dt><dd id="rCons">0%</dd></div>
+      <div><dt data-i18n="timeUsed"></dt><dd id="rTime">0s</dd></div>
+      <div><dt data-i18n="best"></dt><dd id="rBest">—</dd></div>
+      <div><dt data-i18n="setup"></dt><dd id="rCfg" style="font-size:1rem">—</dd></div>
+    </dl>
+    <div class="res-actions">
+      <button class="btn" id="nextBtn" type="button" data-i18n="next"></button>
+      <button class="btn ghost" id="againBtn" type="button" data-i18n="again"></button>
+    </div>
+  </section>
+
+  <footer class="keys">
+    <span><kbd>Tab</kbd> <span data-i18n="next"></span></span>
+    <span><kbd>Esc</kbd> <span data-i18n="again"></span></span>
+    <span data-i18n="local"></span>
+  </footer>
+</div>
+
+<aside class="drawer" id="drawer" hidden data-i18n-aria="drTitle">
+  <div class="dr-head">
+    <h2 data-i18n="drTitle"></h2>
+    <button class="mini" id="drClose" type="button" data-i18n="done"></button>
+  </div>
+  <p class="note" data-i18n="drNote"></p>
+
+  <div class="dr-sec">
+    <h3 data-i18n="start"></h3>
+    <div class="row"><label for="cBase" data-i18n="basePreset"></label><select id="cBase"></select></div>
+  </div>
+
+  <div class="dr-sec">
+    <h3 data-i18n="colors"></h3>
+    <div class="colors">
+      <label><span data-i18n="colBg"></span><input type="color" id="col-bg"></label>
+      <label><span data-i18n="colFg"></span><input type="color" id="col-fg"></label>
+      <label><span data-i18n="colDim"></span><input type="color" id="col-dim"></label>
+      <label><span data-i18n="colAccent"></span><input type="color" id="col-accent"></label>
+      <label><span data-i18n="colError"></span><input type="color" id="col-error"></label>
+    </div>
+  </div>
+
+  <div class="dr-sec">
+    <h3 data-i18n="text"></h3>
+    <div class="row"><label for="cFont" data-i18n="font"></label><select id="cFont"></select></div>
+    <div class="row"><label for="cSize"><span data-i18n="size"></span> <span id="cSizeV"></span></label><input type="range" id="cSize" min="18" max="48" step="1"></div>
+    <div class="row"><span data-i18n="align"></span><div class="seg" id="cAlign"></div></div>
+    <div class="row"><span data-i18n="lines"></span><div class="seg" id="cLines"></div></div>
+  </div>
+
+  <div class="dr-sec">
+    <h3 data-i18n="caret"></h3>
+    <div class="row"><span data-i18n="shape"></span><div class="seg" id="cCaret"></div></div>
+    <div class="row"><span data-i18n="smooth"></span><div class="seg" id="cSmooth"></div></div>
+  </div>
+
+  <div class="dr-sec">
+    <h3 data-i18n="ambience"></h3>
+    <div class="row"><span data-i18n="fx"></span><div class="seg" id="cFx"></div></div>
+  </div>
+
+  <div class="dr-sec">
+    <h3 data-i18n="share"></h3>
+    <div class="code-row"><input type="text" id="cCode" readonly data-i18n-aria="share"><button class="mini" id="cCopy" type="button" data-i18n="copy"></button></div>
+    <div class="code-row"><input type="text" id="cImport" data-i18n-ph="importPh" data-i18n-aria="importPh"><button class="mini" id="cApply" type="button" data-i18n="import"></button></div>
+    <p class="note" id="cMsg"></p>
+  </div>
+
+  <div class="dr-sec">
+    <button class="mini" id="cReset" type="button" data-i18n="reset"></button>
+  </div>
+</aside>
+
+<script>
+(() => {
+'use strict';
+const $ = s => document.querySelector(s);
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+
+/* ---------------- word & sentence data ---------------- */
+const EN = "the be of and a to in have it you that he was for on are with as his they at one this from or had by not but what some we can out other were all there when up use your how said an each she which do their time if will way about many then them write would like so these her long make thing see him two has look more day could go come did number sound no most people my over know water than call first who may down side been now find any new work part take get place made live where after back little only round man year came show every good me give our under name very through just form sentence great think say help low line differ turn cause much mean before move right boy old too same tell does set three want air well also play small end put home read hand port large spell add even land here must big high such follow act why ask men change went light kind off need house picture try us again animal point mother world near build self earth father keyboard finger quiet river window garden".split(' ');
+const EN_Q = [
+  "The quick brown fox jumps over the lazy dog.",
+  "A journey of a thousand miles begins with a single step.",
+  "Small daily habits build the skills that last a lifetime.",
+  "Keep your eyes on the screen and let your fingers find the way home.",
+  "Every key you press is a small vote for the typist you want to become.",
+  "Actions speak louder than words, but typing needs both.",
+  "Where there is a will, there is a way.",
+  "Slow is smooth, and smooth becomes fast.",
+  "Fortune favors the bold and the well prepared.",
+  "Practice does not make perfect; it makes progress."
+];
+const FR = "le la de et un une être avoir que pour dans ce il qui ne sur se pas plus pouvoir par je avec tout faire son mettre autre on mais nous comme ou si leur dire elle devoir avant deux même prendre aussi celui donner bien où fois vous encore nouveau aller cela entre premier vouloir déjà grand mon moins aucun lui temps très savoir falloir voir quelque sans raison notre dont non monde jour demander alors après trouver personne rendre part dernier venir pendant passer peu suivre chose croire parler toujours homme femme enfant maison école eau pain ville rue livre musique soleil été hiver café fenêtre forêt rêve tête main âge château fête garçon français leçon là élève clavier étoile matin soir".split(' ');
+const FR_Q = [
+  "Petit à petit, l'oiseau fait son nid.",
+  "Après la pluie, le beau temps.",
+  "Il n'y a pas de rose sans épines.",
+  "Rien ne sert de courir ; il faut partir à point.",
+  "Qui vivra verra.",
+  "Le temps est un grand maître, dit-on.",
+  "Chaque jour, un peu de pratique rend les doigts plus légers.",
+  "La nuit porte conseil, et le matin apporte la réponse.",
+  "Vouloir, c'est pouvoir."
+];
+const ES = "de la que el en y a los se del las un por con no una su para es al lo como más o pero sus le ha me si sin sobre este ya entre cuando todo esta ser son dos también fue había era muy años hasta desde está mi porque qué sólo han yo hay vez puede todos así nos ni parte tiene él uno donde bien tiempo mismo ese ahora cada vida otro después te otros aunque esa eso hace otra tan durante siempre día tanto ella tres sí dijo gran país según menos mundo año antes niño mañana corazón canción jardín música árbol lápiz pequeño señor fácil café ciudad camino familia trabajo agua noche amigo libro teclado montaña ventana".split(' ');
+const ES_Q = [
+  "Poco a poco se va lejos.",
+  "No hay mal que por bien no venga.",
+  "Más vale tarde que nunca.",
+  "Caminante, no hay camino, se hace camino al andar.",
+  "En un lugar de la Mancha, de cuyo nombre no quiero acordarme.",
+  "Cada día un poco de práctica hace que los dedos vuelen.",
+  "¿Dónde está la biblioteca? ¡Está al lado del café!",
+  "El que madruga encuentra el camino despejado.",
+  "Querer es poder."
+];
+const KO = "사람 saram|시간 sigan|우리 uri|하나 hana|생각 saenggak|문제 munje|사회 sahoe|세계 segye|정도 jeongdo|경우 gyeongu|이야기 iyagi|아이 ai|나라 nara|학교 hakgyo|친구 chingu|가족 gajok|마음 maeum|사랑 sarang|오늘 oneul|내일 naeil|어제 eoje|아침 achim|저녁 jeonyeok|밤 bam|하늘 haneul|바다 bada|산 san|강 gang|꽃 kkot|나무 namu|바람 baram|비 bi|눈 nun|봄 bom|여름 yeoreum|가을 gaeul|겨울 gyeoul|음식 eumsik|커피 keopi|우유 uyu|사과 sagwa|바나나 banana|김치 gimchi|밥 bap|물 mul|집 jip|방 bang|문 mun|창문 changmun|책 chaek|컴퓨터 keompyuteo|전화 jeonhwa|음악 eumak|영화 yeonghwa|노래 norae|여행 yeohaeng|공부 gongbu|운동 undong|일 il|회사 hoesa|선생님 seonsaengnim|학생 haksaeng|의사 uisa|도시 dosi|시장 sijang|거리 geori|버스 beoseu|지하철 jihacheol|자동차 jadongcha|비행기 bihaenggi|길 gil|행복 haengbok|희망 huimang|꿈 kkum|기억 gieok|이름 ireum|얼굴 eolgul|손 son|발 bal|눈물 nunmul|웃음 useum|목소리 moksori|서울 seoul|부산 busan|한글 hangeul|키보드 kibodeu|연습 yeonseup|빠르게 ppareuge|천천히 cheoncheonhi|정확하게 jeonghwakage|아름다운 areumdaun|좋아요 joayo|감사합니다 gamsahamnida|안녕하세요 annyeonghaseyo|괜찮아요 gwaenchanayo|맛있다 masitda|즐겁다 jeulgeopda|쓰다 sseuda|걷다 geotda|달리다 dallida"
+  .split('|').map(x => { const [t, r] = x.split(' '); return { t, r }; });
+const KO_Q = [
+  "천|cheon 리|ri 길도|gildo 한|han 걸음부터.|georeumbuteo.",
+  "시작이|sijagi 반이다.|banida.",
+  "백지장도|baekjijangdo 맞들면|matdeulmyeon 낫다.|natda.",
+  "낮말은|nanmareun 새가|saega 듣고|deutgo 밤말은|bammareun 쥐가|jwiga 듣는다.|deunneunda.",
+  "가는|ganeun 말이|mari 고와야|gowaya 오는|oneun 말이|mari 곱다.|gopda.",
+  "매일|maeil 조금씩|jogeumssik 연습하면|yeonseupamyeon 손가락이|songaragi 저절로|jeojeollo 길을|gireul 찾는다.|channeunda.",
+  "오늘|oneul 하루도|harudo 즐겁고|jeulgeopgo 행복하게|haengbokage 보내세요.|bonaeseyo.",
+  "고생|gosaeng 끝에|kkeute 낙이|nagi 온다.|onda.",
+  "티끌|tikkeul 모아|moa 태산.|taesan."
+];
+const ZH = "你好 nihao|世界 shijie|我们 women|他们 tamen|时间 shijian|朋友 pengyou|学习 xuexi|工作 gongzuo|生活 shenghuo|中国 zhongguo|今天 jintian|明天 mingtian|昨天 zuotian|早上 zaoshang|晚上 wanshang|喜欢 xihuan|知道 zhidao|觉得 juede|可以 keyi|因为 yinwei|所以 suoyi|但是 danshi|如果 ruguo|已经 yijing|现在 xianzai|以后 yihou|开始 kaishi|问题 wenti|东西 dongxi|地方 difang|电脑 diannao|手机 shouji|键盘 jianpan|打字 dazi|练习 lianxi|速度 sudu|准确 zhunque|音乐 yinyue|电影 dianying|学校 xuexiao|老师 laoshi|学生 xuesheng|家人 jiaren|妈妈 mama|爸爸 baba|孩子 haizi|城市 chengshi|天气 tianqi|太阳 taiyang|月亮 yueliang|星星 xingxing|春天 chuntian|夏天 xiatian|秋天 qiutian|冬天 dongtian|花园 huayuan|山水 shanshui|河流 heliu|大海 dahai|森林 senlin|咖啡 kafei|米饭 mifan|面条 miantiao|水果 shuiguo|苹果 pingguo|西瓜 xigua|茶叶 chaye|旅行 lvxing|火车 huoche|飞机 feiji|汽车 qiche|自行车 zixingche|公园 gongyuan|医院 yiyuan|银行 yinhang|商店 shangdian|房间 fangjian|窗户 chuanghu|桌子 zhuozi|椅子 yizi|衣服 yifu|颜色 yanse|红色 hongse|蓝色 lanse|绿色 lvse|快乐 kuaile|幸福 xingfu|希望 xiwang|梦想 mengxiang|努力 nuli|认真 renzhen|安静 anjing|漂亮 piaoliang|聪明 congming|简单 jiandan|重要 zhongyao|方便 fangbian|健康 jiankang|运动 yundong|跑步 paobu|游泳 youyong|唱歌 changge|跳舞 tiaowu|画画 huahua|写字 xiezi|读书 dushu|思考 sikao|发展 fazhan|文化 wenhua|历史 lishi|科学 kexue|技术 jishu|网络 wangluo|信息 xinxi|语言 yuyan|汉字 hanzi|文章 wenzhang|故事 gushi|声音 shengyin|风景 fengjing|未来 weilai"
+  .split('|').map(x => { const [t, r] = x.split(' '); return { t, r }; });
+const ZH_Q = [
+  "床前|chuangqian 明月光，|mingyueguang, 疑是|yishi 地上霜。|dishangshuang. 举头|jutou 望明月，|wangmingyue, 低头|ditou 思故乡。|siguxiang.",
+  "千里之行，|qianlizhixing, 始于|shiyu 足下。|zuxia.",
+  "学而不思|xueerbusi 则罔，|zewang, 思而不学|sierbuxue 则殆。|zedai.",
+  "海内|hainei 存知己，|cunzhiji, 天涯|tianya 若比邻。|ruobilin.",
+  "欲穷|yuqiong 千里目，|qianlimu, 更上|gengshang 一层楼。|yicenglou.",
+  "春眠|chunmian 不觉晓，|bujuexiao, 处处|chuchu 闻啼鸟。|wentiniao. 夜来|yelai 风雨声，|fengyusheng, 花落|hualuo 知多少。|zhiduoshao.",
+  "读书|dushu 破万卷，|powanjuan, 下笔|xiabi 如有神。|ruyoushen.",
+  "宝剑锋|baojianfeng 从磨砺出，|congmolichu, 梅花香|meihuaxiang 自苦寒来。|zikuhanlai.",
+  "每天|meitian 进步|jinbu 一点点，|yidiandian, 坚持|jianchi 下去|xiaqu 就会|jiuhui 看见|kanjian 改变。|gaibian.",
+  "手指|shouzhi 记住了|jizhule 键盘，|jianpan, 心思|xinsi 就能|jiuneng 跟上|gengshang 文字。|wenzi."
+];
+const JA = "日本,にほん,nihon|今日,きょう,kyou|明日,あした,ashita|昨日,きのう,kinou|時間,じかん,jikan|友達,ともだち,tomodachi|学校,がっこう,gakkou|先生,せんせい,sensei|学生,がくせい,gakusei|仕事,しごと,shigoto|会社,かいしゃ,kaisha|電車,でんしゃ,densha|電話,でんわ,denwa|天気,てんき,tenki|雨,あめ,ame|雪,ゆき,yuki|空,そら,sora|海,うみ,umi|山,やま,yama|川,かわ,kawa|花,はな,hana|桜,さくら,sakura|春,はる,haru|夏,なつ,natsu|秋,あき,aki|冬,ふゆ,fuyu|朝,あさ,asa|夜,よる,yoru|猫,ねこ,neko|犬,いぬ,inu|水,みず,mizu|お茶,おちゃ,ocha|ご飯,ごはん,gohan|寿司,すし,sushi|家族,かぞく,kazoku|名前,なまえ,namae|言葉,ことば,kotoba|音楽,おんがく,ongaku|映画,えいが,eiga|写真,しゃしん,shashin|旅行,りょこう,ryokou|料理,りょうり,ryouri|勉強,べんきょう,benkyou|練習,れんしゅう,renshuu|新しい,あたらしい,atarashii|美しい,うつくしい,utsukushii|楽しい,たのしい,tanoshii|優しい,やさしい,yasashii|大きい,おおきい,ookii|小さい,ちいさい,chiisai|静か,しずか,shizuka|元気,げんき,genki|大切,たいせつ,taisetsu|本当,ほんとう,hontou|世界,せかい,sekai|未来,みらい,mirai|気持ち,きもち,kimochi|心,こころ,kokoro|夢,ゆめ,yume|道,みち,michi|町,まち,machi|駅,えき,eki|部屋,へや,heya|窓,まど,mado|本,ほん,hon|手紙,てがみ,tegami|時計,とけい,tokei|自転車,じてんしゃ,jitensha|東京,とうきょう,toukyou|大阪,おおさか,oosaka|ありがとう,ありがとう,arigatou|おはよう,おはよう,ohayou|すみません,すみません,sumimasen|キーボード,きーぼーど,ki-bo-do|コーヒー,こーひー,ko-hi-|パン,ぱん,pan|歩く,あるく,aruku|走る,はしる,hashiru|書く,かく,kaku|読む,よむ,yomu|話す,はなす,hanasu|聞く,きく,kiku|見る,みる,miru|食べる,たべる,taberu|飲む,のむ,nomu|行く,いく,iku|来る,くる,kuru|思う,おもう,omou|待つ,まつ,matsu|始める,はじめる,hajimeru"
+  .split('|').map(x => { const [t, k, r] = x.split(','); return { t, k, r }; });
+const JA_Q = [
+  "千里の道も|senrinomichimo 一歩から。|ippokara.",
+  "継続は|keizokuwa 力なり。|chikaranari.",
+  "七転び|nanakorobi 八起き。|yaoki.",
+  "急がば|isogaba 回れ。|maware.",
+  "石の上にも|ishinouenimo 三年。|sannen.",
+  "毎日|mainichi 少しずつ|sukoshizutsu 練習すれば、|renshuusureba, 指は|yubiwa 自然に|shizenni 覚えていきます。|oboeteikimasu.",
+  "雨上がりの|ameagarino 空に、|sorani, きれいな|kireina 虹が|nijiga かかっていた。|kakatteita.",
+  "古池や|furuikeya 蛙飛び込む|kawazutobikomu 水の音|mizunooto",
+  "今日も|kyoumo 一日、|ichinichi, 楽しく|tanoshiku 過ごしましょう。|sugoshimashou."
+];
+
+/* ---------------- interface translations ----------------
+   Each entry: [中文, English, 日本語, 한국어, Français, Español] */
+const UI_LANGS = [['zh', '中文'], ['en', 'English'], ['ja', '日本語'], ['ko', '한국어'], ['fr', 'Français'], ['es', 'Español']];
+const UI_HTML_LANG = { zh:'zh-CN', en:'en', ja:'ja', ko:'ko', fr:'fr', es:'es' };
+const I18N = {
+  brandSub:   ['六种语言的打字练习', 'Typing practice in six languages', '6か国語のタイピング練習', '6개 언어 타자 연습', 'Dactylographie en six langues', 'Mecanografía en seis idiomas'],
+  custom:     ['自定义', 'Customize', 'カスタマイズ', '사용자 설정', 'Personnaliser', 'Personalizar'],
+  customName: ['自定义', 'Custom', 'カスタム', '사용자', 'Perso', 'Personal'],
+  sound:      ['音效', 'Sound', '効果音', '효과음', 'Son', 'Sonido'],
+  soundTitle: ['按键音效', 'Key sounds', 'キー音', '키 소리', 'Sons des touches', 'Sonido de teclas'],
+  uiLang:     ['界面语言', 'Interface language', '表示言語', '화면 언어', "Langue de l'interface", 'Idioma de la interfaz'],
+  stylesLabel:['风格预设', 'Style presets', 'スタイル', '스타일', 'Styles', 'Estilos'],
+  setupAria:  ['练习设置', 'Practice settings', '練習の設定', '연습 설정', "Réglages d'entraînement", 'Ajustes de práctica'],
+  resultsAria:['本次成绩', 'Your result', '今回の結果', '이번 결과', 'Votre résultat', 'Tu resultado'],
+  practice:   ['练习语言', 'Practice', '練習言語', '연습 언어', 'Langue', 'Idioma'],
+  mode:       ['模式', 'Mode', 'モード', '모드', 'Mode', 'Modo'],
+  mTime:      ['限时', 'Time', '時間', '시간', 'Temps', 'Tiempo'],
+  mWords:     ['词数', 'Words', '単語数', '단어 수', 'Mots', 'Palabras'],
+  mQuote:     ['句子', 'Quote', '名言', '문장', 'Citation', 'Frase'],
+  secs:       ['秒', 'Seconds', '秒', '초', 'Secondes', 'Segundos'],
+  count:      ['数量', 'Count', '数', '개수', 'Nombre', 'Cantidad'],
+  options:    ['选项', 'Options', 'オプション', '옵션', 'Options', 'Opciones'],
+  fold:       ['忽略重音', 'Ignore accents', 'アクセント無視', '악센트 무시', 'Ignorer les accents', 'Ignorar acentos'],
+  focusHint:  ['点击这里，或直接按任意键开始', 'Click here or press any key to start', 'ここをクリックするか、任意のキーで開始', '여기를 클릭하거나 아무 키나 눌러 시작하세요', 'Cliquez ici ou appuyez sur une touche pour commencer', 'Haz clic aquí o pulsa cualquier tecla para empezar'],
+  typeHere:   ['在这里输入', 'Type here', 'ここに入力', '여기에 입력', 'Tapez ici', 'Escribe aquí'],
+  accuracy:   ['准确率', 'Accuracy', '正確率', '정확도', 'Précision', 'Precisión'],
+  newRecord:  ['新纪录', 'New best', '自己ベスト', '신기록', 'Nouveau record', 'Nuevo récord'],
+  lgSpeed:    ['累计速度', 'Overall speed', '累計速度', '누적 속도', 'Vitesse cumulée', 'Velocidad acumulada'],
+  lgRaw:      ['每秒原始速度', 'Raw speed each second', '毎秒の生の速度', '초당 원시 속도', 'Vitesse brute par seconde', 'Velocidad bruta por segundo'],
+  lgErr:      ['当秒有错误', 'Errors in that second', 'その秒のミス', '그 초의 오류', 'Erreurs dans la seconde', 'Errores en ese segundo'],
+  raw:        ['原始速度', 'Raw speed', '生の速度', '원시 속도', 'Vitesse brute', 'Velocidad bruta'],
+  script:     ['折合原文', 'In original script', '原文換算', '원문 환산', "En écriture d'origine", 'En escritura original'],
+  chars:      ['字符 正确 / 错误', 'Characters right / wrong', '文字 正解 / ミス', '글자 정답 / 오답', 'Caractères justes / faux', 'Caracteres bien / mal'],
+  cons:       ['稳定性', 'Consistency', '安定性', '일관성', 'Régularité', 'Constancia'],
+  timeUsed:   ['用时', 'Time', '所要時間', '소요 시간', 'Durée', 'Tiempo'],
+  best:       ['本设置最佳', 'Best for this setup', 'この設定の最高記録', '이 설정 최고 기록', 'Record pour ce réglage', 'Mejor con este ajuste'],
+  setup:      ['设置', 'Setup', '設定', '설정', 'Réglage', 'Ajuste'],
+  next:       ['换一组', 'New text', '次のテキスト', '새 문장', 'Nouveau texte', 'Nuevo texto'],
+  again:      ['重打这一组', 'Retry this text', 'もう一度', '다시 하기', 'Recommencer', 'Repetir'],
+  local:      ['成绩和外观设置只保存在你的浏览器里', 'Scores and appearance are saved only in your browser', '記録と外観の設定はこのブラウザにだけ保存されます', '기록과 외관 설정은 이 브라우저에만 저장됩니다', 'Scores et apparence restent dans votre navigateur', 'Las puntuaciones y la apariencia se guardan solo en tu navegador'],
+  tabHint:    ['按 {tab} 换一组。', 'Press {tab} for a new text.', '{tab} で次のテキスト。', '{tab} 키로 새 문장.', '{tab} pour un nouveau texte.', '{tab} para un texto nuevo.'],
+  imeWarn:    ['检测到输入法正在组字。本站全部用字母直接输入，请切换到英文键盘（中文输入法可按 {shift} 切到英文）。',
+               'An input method is composing text. This site is typed with plain letters only, so switch to an English keyboard layout.',
+               'IME が変換中です。このサイトはアルファベットで直接入力します。英字入力に切り替えてください。',
+               '입력기가 조합 중입니다. 이 사이트는 알파벳으로 바로 입력하니 영문 자판으로 바꿔 주세요.',
+               'Un éditeur de saisie (IME) compose du texte. Ce site se tape uniquement en lettres latines : passez à un clavier latin.',
+               'Un método de entrada (IME) está componiendo texto. Este sitio se escribe solo con letras latinas: cambia a un teclado latino.'],
+  drTitle:    ['自定义外观', 'Customize appearance', '外観のカスタマイズ', '외관 사용자 설정', "Personnaliser l'apparence", 'Personalizar la apariencia'],
+  done:       ['完成', 'Done', '完了', '완료', 'Terminé', 'Listo'],
+  drNote:     ['改动会立即生效，并保存为“自定义”风格。随时可以点上方的预设切回去。',
+               'Changes apply instantly and are saved as the “Custom” style. Pick a preset above any time to switch back.',
+               '変更はすぐに反映され、「カスタム」として保存されます。上のプリセットでいつでも戻せます。',
+               '변경 사항은 바로 적용되고 ‘사용자’ 스타일로 저장됩니다. 위의 프리셋으로 언제든 돌아갈 수 있습니다.',
+               'Les changements s’appliquent aussitôt et sont enregistrés comme style « Perso ». Choisissez un style en haut pour revenir.',
+               'Los cambios se aplican al instante y se guardan como estilo «Personal». Elige un estilo arriba para volver.'],
+  start:      ['起点', 'Starting point', 'ベース', '시작점', 'Point de départ', 'Punto de partida'],
+  basePreset: ['基于预设', 'Based on', '元のプリセット', '기본 프리셋', 'Basé sur', 'Basado en'],
+  colors:     ['颜色', 'Colors', '色', '색상', 'Couleurs', 'Colores'],
+  colBg:      ['背景', 'Background', '背景', '배경', 'Fond', 'Fondo'],
+  colFg:      ['已打', 'Typed', '入力済み', '입력됨', 'Tapé', 'Escrito'],
+  colDim:     ['未打', 'Untyped', '未入力', '미입력', 'À taper', 'Pendiente'],
+  colAccent:  ['强调', 'Accent', 'アクセント', '강조', 'Accent', 'Acento'],
+  colError:   ['错误', 'Error', 'ミス', '오류', 'Erreur', 'Error'],
+  text:       ['文字', 'Text', '文字', '글자', 'Texte', 'Texto'],
+  font:       ['字体', 'Font', 'フォント', '글꼴', 'Police', 'Fuente'],
+  size:       ['字号', 'Size', 'サイズ', '크기', 'Taille', 'Tamaño'],
+  align:      ['对齐', 'Alignment', '配置', '정렬', 'Alignement', 'Alineación'],
+  lines:      ['显示行数', 'Visible lines', '表示行数', '표시 줄 수', 'Lignes visibles', 'Líneas visibles'],
+  caret:      ['光标', 'Caret', 'カーソル', '커서', 'Curseur', 'Cursor'],
+  shape:      ['形状', 'Shape', '形', '모양', 'Forme', 'Forma'],
+  smooth:     ['平滑移动', 'Smooth motion', 'なめらかに移動', '부드럽게 이동', 'Mouvement fluide', 'Movimiento suave'],
+  ambience:   ['氛围', 'Ambience', '雰囲気', '분위기', 'Ambiance', 'Ambiente'],
+  fx:         ['背景效果', 'Background effect', '背景効果', '배경 효과', 'Effet de fond', 'Efecto de fondo'],
+  share:      ['分享主题', 'Share theme', 'テーマを共有', '테마 공유', 'Partager le thème', 'Compartir tema'],
+  copy:       ['复制', 'Copy', 'コピー', '복사', 'Copier', 'Copiar'],
+  import:     ['导入', 'Import', '読み込む', '가져오기', 'Importer', 'Importar'],
+  importPh:   ['粘贴别人的主题代码', 'Paste a theme code', 'テーマコードを貼り付け', '테마 코드 붙여넣기', 'Collez un code de thème', 'Pega un código de tema'],
+  codePh:     ['改动任意一项后生成主题代码', 'A code appears once you change something', '設定を変えるとコードが表示されます', '설정을 바꾸면 코드가 나타납니다', 'Un code apparaît après une modification', 'Aparece un código al cambiar algo'],
+  reset:      ['清除自定义，回到预设', 'Clear custom style, back to preset', 'カスタムを消してプリセットに戻す', '사용자 설정 지우고 프리셋으로', 'Effacer le style perso', 'Borrar el estilo personal'],
+  left:       ['靠左', 'Left', '左', '왼쪽', 'Gauche', 'Izquierda'],
+  center:     ['居中', 'Center', '中央', '가운데', 'Centre', 'Centro'],
+  cLine:      ['竖线', 'Bar', '縦線', '세로선', 'Barre', 'Barra'],
+  cBlock:     ['方块', 'Block', 'ブロック', '블록', 'Bloc', 'Bloque'],
+  cUnder:     ['下划线', 'Underline', '下線', '밑줄', 'Souligné', 'Subrayado'],
+  cNone:      ['隐藏', 'Hidden', '非表示', '숨김', 'Masqué', 'Oculto'],
+  on:         ['开', 'On', 'オン', '켜기', 'Oui', 'Sí'],
+  off:        ['关', 'Off', 'オフ', '끄기', 'Non', 'No'],
+  fxNone:     ['无', 'None', 'なし', '없음', 'Aucun', 'Ninguno'],
+  fxBlobs:    ['光晕', 'Glow', '光', '빛', 'Halo', 'Halo'],
+  fxGrain:    ['颗粒', 'Grain', '粒子', '입자', 'Grain', 'Grano'],
+  fxBoth:     ['光晕+颗粒', 'Glow + grain', '光＋粒子', '빛+입자', 'Halo + grain', 'Halo + grano'],
+  fontFollow: ['跟随预设', 'Preset default', 'プリセット通り', '프리셋 기본값', 'Selon le style', 'Según el estilo'],
+  fMono:      ['等宽', 'mono', '等幅', '고정폭', 'chasse fixe', 'monoespaciada'],
+  fSans:      ['无衬线', 'sans', 'ゴシック', '고딕', 'sans empattement', 'sin serifa'],
+  fSerif:     ['衬线', 'serif', '明朝', '명조', 'à empattement', 'con serifa'],
+  fClassic:   ['古典衬线', 'classic serif', 'クラシック明朝', '클래식 명조', 'classique', 'clásica'],
+  fEditorial: ['杂志衬线', 'editorial serif', '雑誌風明朝', '잡지풍 명조', 'éditoriale', 'editorial'],
+  p_minimal:  ['极简', 'Minimal', 'ミニマル', '미니멀', 'Minimal', 'Minimal'],
+  p_gallery:  ['画廊', 'Gallery', 'ギャラリー', '갤러리', 'Galerie', 'Galería'],
+  p_obsidian: ['曜石', 'Obsidian', '黒曜石', '흑요석', 'Obsidienne', 'Obsidiana'],
+  p_aurora:   ['极光', 'Aurora', 'オーロラ', '오로라', 'Aurore', 'Aurora'],
+  p_dawn:     ['晨雾', 'Dawn', '朝霧', '새벽 안개', 'Aube', 'Alba'],
+  p_celadon:  ['青瓷', 'Celadon', '青磁', '청자', 'Céladon', 'Celadón'],
+  needEdit:   ['先改动任意一项，才会生成主题代码。', 'Change any setting first to create a theme code.', 'いずれかの設定を変えるとテーマコードが作られます。', '설정을 하나 바꾸면 테마 코드가 만들어집니다.', 'Modifiez un réglage pour créer un code de thème.', 'Cambia algún ajuste para crear un código de tema.'],
+  copied:     ['已复制。发给朋友，对方在这里粘贴导入即可。', 'Copied. Send it to a friend; they can paste it here to import.', 'コピーしました。友達に送れば、ここに貼り付けて読み込めます。', '복사했습니다. 친구에게 보내면 여기에 붙여넣어 가져올 수 있습니다.', 'Copié. Envoyez-le à un ami : il pourra le coller ici.', 'Copiado. Envíalo a un amigo y podrá pegarlo aquí.'],
+  selected:   ['已选中代码，按 Ctrl+C（Mac 上 ⌘C）复制。', 'Code selected. Press Ctrl+C (⌘C on Mac) to copy.', 'コードを選択しました。Ctrl+C（Mac は ⌘C）でコピーしてください。', '코드를 선택했습니다. Ctrl+C(Mac은 ⌘C)로 복사하세요.', 'Code sélectionné. Appuyez sur Ctrl+C (⌘C sur Mac).', 'Código seleccionado. Pulsa Ctrl+C (⌘C en Mac).'],
+  imported:   ['已导入并应用。', 'Imported and applied.', '読み込んで適用しました。', '가져와서 적용했습니다.', 'Importé et appliqué.', 'Importado y aplicado.'],
+  badCode:    ['这段代码无法识别。主题代码以 TG1. 开头，请完整复制后再试。', 'This code is not recognized. Theme codes start with TG1. Copy the whole code and try again.', 'このコードは読み込めません。テーマコードは TG1. で始まります。全体をコピーしてもう一度お試しください。', '이 코드는 인식할 수 없습니다. 테마 코드는 TG1.로 시작합니다. 전체를 복사해 다시 시도하세요.', 'Code non reconnu. Les codes de thème commencent par TG1. Copiez le code en entier et réessayez.', 'Código no reconocido. Los códigos de tema empiezan por TG1. Copia el código completo e inténtalo de nuevo.'],
+  cleared:    ['已清除自定义。', 'Custom style cleared.', 'カスタムを消去しました。', '사용자 설정을 지웠습니다.', 'Style perso effacé.', 'Estilo personal borrado.'],
+  secUnit:    ['秒', 's', '秒', '초', 's', 's'],
+  wordUnit:   ['词', 'words', '語', '단어', 'mots', 'palabras'],
+  sPinyin:    ['拼音', 'Pinyin', 'ピンイン', '병음', 'Pinyin', 'Pinyin'],
+  sRomaji:    ['罗马字', 'Romaji', 'ローマ字', '로마자', 'Romaji', 'Romaji'],
+  sKoRoman:   ['罗马字', 'Romanization', 'ローマ字', '로마자', 'Romanisation', 'Romanización'],
+  perMin:     ['字/分', 'chars/min', '字/分', '자/분', 'car./min', 'car./min'],
+  errAt:      ['{s}s：{n} 处错误', '{s}s: {n} errors', '{s}秒：ミス {n}', '{s}초: 오류 {n}개', '{s} s : {n} erreurs', '{s} s: {n} errores'],
+  chartAria:  ['速度随时间变化的折线图', 'Line chart of speed over time', '時間ごとの速度の折れ線グラフ', '시간에 따른 속도 꺾은선 그래프', 'Courbe de vitesse dans le temps', 'Gráfico de velocidad en el tiempo'],
+};
+/* Tip shown under the text: TIPS[practiceLanguage] in the interface language */
+const TIPS = {
+  en: ['直接输入英文，空格也算字符。', 'Type the English text. Spaces count as characters.', '英文をそのまま入力します。スペースも1文字です。', '영어 문장을 그대로 입력하세요. 띄어쓰기도 글자로 셉니다.', 'Tapez le texte anglais. Les espaces comptent comme des caractères.', 'Escribe el texto en inglés. Los espacios cuentan como caracteres.'],
+  zh: ['不用输入法，直接打不带声调的拼音，ü 用 v 代替，词与词之间按空格。上方小字是对应的汉字。', 'Type toneless pinyin, no input method needed. Use v for ü and press space between words. The Chinese characters are shown above.', 'IME は使わず、声調なしのピンインを入力します。ü は v、単語の間はスペース。上に漢字が表示されます。', '입력기 없이 성조 없는 병음을 입력하세요. ü는 v로, 단어 사이는 띄어쓰기. 위에 한자가 표시됩니다.', 'Tapez le pinyin sans tons, sans éditeur de saisie. ü s’écrit v, avec une espace entre les mots. Les caractères chinois sont affichés au-dessus.', 'Escribe pinyin sin tonos, sin método de entrada. La ü se escribe v y hay espacio entre palabras. Los caracteres chinos aparecen arriba.'],
+  ja: ['不用输入法，直接打罗马字（长音按假名拼写，如 kyou；ー 用 - ），上方小字是对应的日文。', 'Type romaji, no input method needed. Spell long vowels as in kana (kyou) and type ー as -. The Japanese is shown above.', 'IME は使わず、ローマ字で入力します。長音はかな通り（kyou）、ー は - 。上に日本語が表示されます。', '입력기 없이 로마자로 입력하세요. 장음은 가나대로(kyou), ー는 - 로. 위에 일본어가 표시됩니다.', 'Tapez en romaji, sans éditeur de saisie. Les voyelles longues suivent les kana (kyou), ー s’écrit -. Le japonais est affiché au-dessus.', 'Escribe en romaji, sin método de entrada. Las vocales largas siguen el kana (kyou) y ー se escribe -. El japonés aparece arriba.'],
+  ko: ['不用输入法，直接打韩文的罗马字（韩国国语罗马字标记法），上方小字是对应的韩文。', 'Type Korean in Revised Romanization, no input method needed. The Hangul is shown above.', 'IME は使わず、韓国語をローマ字（国語のローマ字表記法）で入力します。上にハングルが表示されます。', '입력기 없이 국어의 로마자 표기법으로 입력하세요. 위에 한글이 표시됩니다.', 'Tapez le coréen en romanisation révisée, sans éditeur de saisie. Le hangeul est affiché au-dessus.', 'Escribe el coreano en romanización revisada, sin método de entrada. El hangul aparece arriba.'],
+  fr: ['法语有重音字母。默认开启“忽略重音”，é 打 e、ç 打 c 都算对；关掉后需要打出重音。', 'French uses accented letters. “Ignore accents” is on by default, so e counts for é and c for ç. Turn it off to practise accents.', 'フランス語にはアクセント付き文字があります。「アクセント無視」は初期設定でオンなので、é は e、ç は c で正解です。', '프랑스어에는 악센트 문자가 있습니다. ‘악센트 무시’가 기본으로 켜져 있어 é는 e, ç는 c로 쳐도 됩니다.', '« Ignorer les accents » est activé par défaut : e compte pour é, c pour ç. Désactivez-le pour vous entraîner aux accents.', 'El francés tiene letras acentuadas. «Ignorar acentos» está activado: e vale por é y c por ç. Desactívalo para practicar los acentos.'],
+  es: ['西班牙语有 ñ、á 等字母。默认开启“忽略重音”，ñ 打 n 也算对，句首的 ¿ ¡ 会去掉。', 'Spanish uses ñ, á and similar letters. “Ignore accents” is on by default, so n counts for ñ and the opening ¿ ¡ are removed.', 'スペイン語には ñ や á があります。「アクセント無視」がオンなら ñ は n で正解、文頭の ¿ ¡ は省かれます。', '스페인어에는 ñ, á 등이 있습니다. ‘악센트 무시’가 켜져 있으면 ñ는 n으로 쳐도 되고, 문장 앞 ¿ ¡는 빠집니다.', 'L’espagnol utilise ñ, á, etc. Avec « Ignorer les accents », n compte pour ñ et les ¿ ¡ initiaux sont retirés.', '«Ignorar acentos» está activado por defecto: n vale por ñ y se quitan los ¿ ¡ iniciales. Desactívalo para practicar.'],
+};
+const UI_IDX = { zh:0, en:1, ja:2, ko:3, fr:4, es:5 };
+let uiLang = 'en';
+function t(key, vars) {
+  const row = I18N[key]; let s = row ? (row[UI_IDX[uiLang]] || row[1]) : key;
+  if (vars) for (const k in vars) s = s.split('{' + k + '}').join(vars[k]);
+  return s;
+}
+function detectUi() {
+  const langs = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'en']);
+  for (const l of langs) { const p = String(l).toLowerCase().slice(0, 2); if (p in UI_IDX) return p; }
+  return 'en';
+}
+
+const LANGS = {
+  en: { name:'English', kind:'latin', words:EN, quotes:EN_Q, code:'en' },
+  zh: { name:'中文', kind:'roman', words:ZH, quotes:ZH_Q, code:'zh-CN', scheme:'sPinyin' },
+  ja: { name:'日本語', kind:'roman', words:JA, quotes:JA_Q, code:'ja', scheme:'sRomaji' },
+  ko: { name:'한국어', kind:'roman', words:KO, quotes:KO_Q, code:'ko', scheme:'sKoRoman' },
+  fr: { name:'Français', kind:'latin', words:FR, quotes:FR_Q, code:'fr', accents:true },
+  es: { name:'Español', kind:'latin', words:ES, quotes:ES_Q, code:'es', accents:true },
+};
+const TIMES = [15, 30, 60, 90, 120], COUNTS = [10, 25, 50, 100];
+
+/* ---------------- appearance presets ---------------- */
+const PRESETS = [
+  { id:'minimal',  name:'极简', sw:['#f4f5f3', '#0d7a64'], caret:'line',      fx:'none' },
+  { id:'gallery',  name:'画廊', sw:['#f1f1ee', '#1335b8'], caret:'underline', fx:'none' },
+  { id:'obsidian', name:'曜石', sw:['#0b0b0d', '#cfae6e'], caret:'line',      fx:'grain' },
+  { id:'aurora',   name:'极光', sw:['#060912', '#7fe3d1'], caret:'block',     fx:'blobs grain' },
+  { id:'dawn',     name:'晨雾', sw:['#f4f2f7', '#b4466a'], caret:'line',      fx:'blobs' },
+  { id:'celadon',  name:'青瓷', sw:['#dce5df', '#1f5961'], caret:'underline', fx:'grain' },
+];
+const preset = id => PRESETS.find(p => p.id === id) || PRESETS[0];
+/* [font-family value, display name, kind label key, is serif] */
+const FONTS = [
+  ['', '', 'fontFollow', false], ['DM Mono', 'DM Mono', 'fMono', false], ['JetBrains Mono', 'JetBrains Mono', 'fMono', false],
+  ['IBM Plex Mono', 'IBM Plex Mono', 'fMono', false], ['Manrope', 'Manrope', 'fSans', false],
+  ['Fraunces', 'Fraunces', 'fSerif', true], ['Cormorant Garamond', 'Cormorant', 'fClassic', true], ['Instrument Serif', 'Instrument', 'fEditorial', true],
+];
+const fontLabel = f => f[1] ? `${f[1]} · ${t(f[2])}` : t(f[2]);
+const COLOR_KEYS = ['bg', 'fg', 'dim', 'accent', 'error'];
+const CUSTOM_VARS = ['--bg','--fg','--dim','--accent','--error','--surface','--muted','--line','--panel','--panel-border','--error-bg','--accent-ink','--b1','--b2','--b3','--latin','--cjk-sc','--cjk-jp','--cjk-kr','--text-size','color-scheme'];
+
+/* ---------------- settings ---------------- */
+const defaults = { lang:'en', mode:'time', time:30, words:25, fold:true, sound:false, style:'minimal', custom:null, ui:'' };
+const settings = Object.assign({}, defaults, store.get('typeglot2-settings', {}));
+if (!(settings.ui in UI_IDX)) settings.ui = detectUi();
+uiLang = settings.ui;
+if (!LANGS[settings.lang]) settings.lang = 'en';
+if (!TIMES.includes(settings.time)) settings.time = 30;
+if (settings.style !== 'custom' && !PRESETS.some(p => p.id === settings.style)) settings.style = 'minimal';
+if (settings.style === 'custom' && !settings.custom) settings.style = 'minimal';
+const save = () => store.set('typeglot2-settings', settings);
+
+/* Every language is typed directly on a plain keyboard — no input method.
+   Chinese/Japanese/Korean are typed as pinyin / romaji / romanized Korean, with the original script shown above. */
+function profile() {
+  const L = LANGS[settings.lang];
+  const roman = L.kind === 'roman';
+  return { L, sep:' ', unit:'wpm', hints:roman, roman, accents:!!L.accents };
+}
+let prof = profile();
+const UNIT_LABEL = { wpm:'WPM' };
+
+/* ---------------- comparison ---------------- */
+const PUNCT = { '，':',', '。':'.', '！':'!', '？':'?', '：':':', '；':';', '（':'(', '）':')', '“':'"', '”':'"', '‘':"'", '’':"'", '、':',', '　':' ', '～':'~', '—':'-', '－':'-' };
+function norm(c) {
+  c = PUNCT[c] || c;
+  if (prof.accents && settings.fold) c = c.normalize('NFD').replace(/[̀-ͯ]/g, '');
+  return c;
+}
+const eq = (a, b) => a === b || norm(a) === norm(b);
+function unitOf() { return 1; }
+const SCRIPT_PUNCT = /[\s，。、！？：；,.!?:;「」『』“”‘’（）()]/g;
+function speed(units, secs) {
+  if (secs <= 0.05) return 0;
+  return units / (secs / 60) / 5;
+}
+
+/* ---------------- elements ---------------- */
+const stage = $('#stage'), wordsEl = $('#words'), inner = $('#inner'), ta = $('#ta'), compEl = $('#comp');
+const liveMain = $('#liveMain'), liveSpeed = $('#liveSpeed'), cfgEl = $('#config'), results = $('#results');
+const drawer = $('#drawer');
+const caret = document.createElement('div'); caret.className = 'caret idle';
+
+/* ---------------- test state ---------------- */
+let test = null, charEls = [], lineStep = 40, scrollPx = 0, timer = null, visibleLines = 3;
+let composing = false, compBase = 0, idleTimer = null;
+
+function pick(list, n, prev) {
+  const out = []; let last = prev;
+  for (let i = 0; i < n; i++) {
+    let w; let guard = 0;
+    do { w = list[Math.floor(Math.random() * list.length)]; } while (w === last && guard++ < 5);
+    out.push(w); last = w;
+  }
+  return out;
+}
+function toWord(item) {
+  if (prof.roman) return { text:item.r, hint:item.t };
+  return { text:item, hint:'' };
+}
+function makeWords(n) {
+  const items = pick(prof.L.words, n, test && test.lastPick);
+  if (test) test.lastPick = items[items.length - 1];
+  return items.map(toWord);
+}
+function makeQuote() {
+  const qs = prof.L.quotes;
+  let used = new Set(), text = '';
+  while (text.length < 70 && used.size < qs.length) {
+    let i; do { i = Math.floor(Math.random() * qs.length); } while (used.has(i));
+    used.add(i);
+    text += (text ? ' ' : '') + qs[i];
+  }
+  if (prof.accents && settings.fold) text = text.replace(/[¿¡]/g, '');
+  if (prof.roman) return text.split(' ').map(tok => { const [t, r] = tok.split('|'); return { text:r, hint:t }; });
+  return text.split(' ').map(w => ({ text:w, hint:'' }));
+}
+
+function newTest(reuse) {
+  clearInterval(timer); timer = null;
+  prof = profile();
+  const mode = settings.mode;
+  let list = null;
+  if (reuse && test) list = test.words.map(w => ({ text:w.text, hint:w.hint }));
+  else if (mode === 'quote') list = makeQuote();
+  test = {
+    mode, words:[], target:'', typed:'', started:false, finished:false, startTime:0,
+    okKeys:0, badKeys:0, rawUnits:0, secRaw:0, secErr:0, secIdx:0, samples:[], lastPick:null
+  };
+  if (!list) list = makeWords(mode === 'time' ? 90 : settings.words);
+  charEls = []; scrollPx = 0;
+  inner.textContent = ''; inner.style.transform = 'translateY(0)';
+  inner.appendChild(caret);
+  wordsEl.lang = prof.L.code; ta.lang = prof.L.code;
+  wordsEl.dataset.lang = settings.lang;
+  appendWords(list, mode !== 'time');
+  composing = false; ta.blur(); ta.value = '';
+  compEl.hidden = true;
+  document.body.classList.remove('typing');
+  results.hidden = true; stage.hidden = false; $('#tip').hidden = false;
+  renderTip();
+  layout(); updateLive();
+  if (drawer.hidden) focusInput();
+}
+
+function appendWords(list, closeLast) {
+  const frag = document.createDocumentFragment();
+  list.forEach((w, idx) => {
+    const isLast = closeLast && idx === list.length - 1;
+    const full = w.text + (isLast ? '' : prof.sep);
+    const word = { text:w.text, hint:w.hint, start:test.target.length };
+    const el = document.createElement('span'); el.className = 'w';
+    if (prof.hints) {
+      const h = document.createElement('span'); h.className = 'hint';
+      h.textContent = w.hint || ' '; el.appendChild(h);
+    }
+    const cs = document.createElement('span'); cs.className = 'cs';
+    for (const ch of full.split('')) {
+      const c = document.createElement('span');
+      c.className = ch === ' ' ? 'c sp' : 'c'; c.textContent = ch;
+      cs.appendChild(c); charEls.push(c);
+    }
+    el.appendChild(cs); frag.appendChild(el);
+    test.target += full; word.end = test.target.length;
+    test.words.push(word);
+  });
+  inner.appendChild(frag);
+}
+
+/* ---------------- layout & caret ---------------- */
+function layout() {
+  const first = inner.querySelector('.w');
+  if (!first) return;
+  const gap = parseFloat(getComputedStyle(inner).rowGap) || 0;
+  lineStep = first.offsetHeight + gap;
+  wordsEl.style.height = (lineStep * visibleLines - gap + 2) + 'px';
+  scrollPx = -1; place();
+}
+function place() {
+  if (!test) return;
+  const i = test.typed.length;
+  let el = charEls[i], atEnd = false;
+  if (!el) { el = charEls[charEls.length - 1]; atEnd = true; }
+  if (!el) return;
+  const ir = inner.getBoundingClientRect(), r = el.getBoundingClientRect();
+  const x = (atEnd ? r.right : r.left) - ir.left, y = r.top - ir.top;
+  caret.style.left = x + 'px'; caret.style.top = y + 'px';
+  caret.style.setProperty('--cw', r.width + 'px'); caret.style.setProperty('--ch', r.height + 'px');
+  const wy = el.closest('.w').getBoundingClientRect().top - ir.top;
+  const line = Math.round(wy / lineStep);
+  const keep = visibleLines > 2 ? 1 : 0;
+  const target = Math.max(0, line - keep) * lineStep;
+  if (target !== scrollPx) { scrollPx = target; inner.style.transform = `translateY(${-target}px)`; }
+  const sr = stage.getBoundingClientRect(), br = wordsEl.getBoundingClientRect();
+  const px = br.left - sr.left + x, py = br.top - sr.top + y - scrollPx;
+  ta.style.left = Math.max(0, Math.min(px, sr.width - 40)) + 'px'; ta.style.top = py + 'px';
+  compEl.style.left = Math.max(0, Math.min(px, sr.width - 160)) + 'px'; compEl.style.top = (py - 6) + 'px';
+}
+function paint(from, to) {
+  const t = test.target, ty = test.typed;
+  for (let i = from; i < to; i++) {
+    const el = charEls[i]; if (!el) continue;
+    let cls = t[i] === ' ' ? 'c sp' : 'c';
+    if (i < ty.length) cls += eq(ty[i], t[i]) ? ' ok' : ' bad';
+    if (el.className !== cls) el.className = cls;
+  }
+}
+function wake() {
+  caret.classList.remove('idle');
+  clearTimeout(idleTimer);
+  idleTimer = setTimeout(() => caret.classList.add('idle'), 600);
+}
+
+/* ---------------- input handling ---------------- */
+function focusInput() {
+  if (!results.hidden || !drawer.hidden) return;
+  try { ta.focus({ preventScroll:true }); } catch (e) { ta.focus(); }
+  const n = ta.value.length; try { ta.setSelectionRange(n, n); } catch (e) {}
+}
+function ensureStarted() {
+  if (test.started || test.finished) return;
+  test.started = true; test.startTime = performance.now();
+  timer = setInterval(tickTimer, 100);
+}
+function sync() {
+  if (test.finished) return;
+  let v = ta.value.replace(/[\r\n]/g, '');
+  if (v.length > test.target.length) v = v.slice(0, test.target.length);
+  if (v !== ta.value) ta.value = v;
+  compEl.hidden = true;
+  applyTyped(v);
+}
+function applyTyped(v) {
+  const old = test.typed, t = test.target;
+  let p = 0; const m = Math.min(old.length, v.length);
+  while (p < m && old[p] === v[p]) p++;
+  let anyBad = false, added = false;
+  for (let i = p; i < v.length; i++) {
+    added = true;
+    test.rawUnits += 1; test.secRaw += 1;
+    if (eq(v[i], t[i])) test.okKeys++; else { test.badKeys++; test.secErr++; anyBad = true; }
+  }
+  test.typed = v;
+  paint(p, Math.max(old.length, v.length));
+  if (added) click(anyBad);
+  if (test.mode === 'time' && t.length - v.length < 80) appendWords(makeWords(30), false);
+  if (v.length !== old.length) document.body.classList.add('typing');
+  place(); wake(); updateLive();
+  if (test.mode !== 'time' && v.length >= t.length) finish();
+}
+ta.addEventListener('compositionstart', () => {
+  if (test.finished) return;
+  composing = true; compBase = ta.value.length; ensureStarted();
+  const tip = $('#tip');
+  tip.classList.add('warn');
+  tip.innerHTML = t('imeWarn', { shift:'<kbd>Shift</kbd>' });
+});
+ta.addEventListener('compositionend', () => { composing = false; sync(); });
+ta.addEventListener('input', e => {
+  if (test.finished) { ta.value = test.typed; return; }
+  ensureStarted();
+  if (composing || e.isComposing) {
+    const c = ta.value.slice(compBase);
+    compEl.textContent = c; compEl.hidden = !c;
+    wake(); return;
+  }
+  sync();
+});
+ta.addEventListener('keydown', e => {
+  initAudioIfWanted();
+  const comp = e.isComposing || e.keyCode === 229;
+  if (e.key === 'Tab') { e.preventDefault(); newTest(false); return; }
+  if (comp) return;
+  if (e.key === 'Escape') { e.preventDefault(); newTest(true); return; }
+  if (e.key === 'Enter') { e.preventDefault(); return; }
+  if (['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End','PageUp','PageDown'].includes(e.key)) e.preventDefault();
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'a') e.preventDefault();
+});
+ta.addEventListener('focus', () => { stage.classList.add('focused'); });
+ta.addEventListener('blur', () => { stage.classList.remove('focused'); document.body.classList.remove('typing'); });
+stage.addEventListener('mousedown', e => { if (!drawer.hidden) return; e.preventDefault(); focusInput(); });
+stage.addEventListener('touchend', () => focusInput());
+document.addEventListener('mousemove', () => document.body.classList.remove('typing'));
+document.addEventListener('keydown', e => {
+  if (e.target === ta) return;
+  initAudioIfWanted();
+  if (!drawer.hidden) { if (e.key === 'Escape') closeDrawer(); return; }
+  const tag = (e.target.tagName || '').toLowerCase();
+  if (tag === 'input' || tag === 'select' || tag === 'textarea') return;
+  if (e.key === 'Tab' && (e.target === document.body || !results.hidden)) { e.preventDefault(); newTest(false); return; }
+  if (e.key === 'Escape') { e.preventDefault(); newTest(true); return; }
+  if (!results.hidden) return;
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  if (tag === 'button' && (e.key === ' ' || e.key === 'Enter')) return;
+  if (e.key.length === 1 || e.key === 'Process') focusInput();
+});
+
+/* ---------------- timer & stats ---------------- */
+function correctUnits() {
+  let u = 0; const t = test.target, ty = test.typed;
+  for (let i = 0; i < ty.length; i++) if (eq(ty[i], t[i])) u++;
+  return u;
+}
+function elapsed() { return test.started ? (performance.now() - test.startTime) / 1000 : 0; }
+function tickTimer() {
+  const s = elapsed();
+  while (test.secIdx + 1 <= s) {
+    test.secIdx++;
+    test.samples.push({ t:test.secIdx, sp:speed(correctUnits(), test.secIdx), raw:speed(test.secRaw, 1), err:test.secErr });
+    test.secRaw = 0; test.secErr = 0;
+  }
+  if (test.mode === 'time' && s >= settings.time) { finish(); return; }
+  updateLive();
+}
+function updateLive() {
+  const s = elapsed();
+  if (test.mode === 'time') liveMain.textContent = Math.max(0, Math.ceil(settings.time - s));
+  else if (test.mode === 'words') {
+    const done = test.words.filter(w => w.start + w.text.length <= test.typed.length).length;
+    liveMain.textContent = `${done}/${test.words.length}`;
+  } else liveMain.textContent = Math.floor(test.typed.length / test.target.length * 100) + '%';
+  if (test.started && s > 1) {
+    liveSpeed.innerHTML = `${Math.round(speed(correctUnits(), s))}<span class="live-unit">WPM</span>`;
+  } else liveSpeed.innerHTML = `<span class="live-unit">WPM</span>`;
+}
+
+function finish() {
+  if (test.finished) return;
+  test.finished = true; clearInterval(timer); timer = null;
+  const secs = test.mode === 'time' ? settings.time : elapsed();
+  const frac = secs - test.secIdx;
+  if (frac > 0.25 || test.samples.length === 0) {
+    test.samples.push({ t:+secs.toFixed(2), sp:speed(correctUnits(), secs), raw:speed(test.secRaw, Math.max(frac, 0.25)), err:test.secErr });
+  }
+  const sp = speed(correctUnits(), secs), raw = speed(test.rawUnits, secs);
+  const keys = test.okKeys + test.badKeys;
+  const acc = keys ? test.okKeys / keys * 100 : 0;
+  const raws = test.samples.map(x => x.raw);
+  const mean = raws.reduce((a, b) => a + b, 0) / (raws.length || 1);
+  const sd = Math.sqrt(raws.reduce((a, b) => a + (b - mean) ** 2, 0) / (raws.length || 1));
+  const cons = mean ? Math.max(0, 100 * (1 - sd / mean)) : 0;
+  let okC = 0, badC = 0;
+  for (let i = 0; i < test.typed.length; i++) eq(test.typed[i], test.target[i]) ? okC++ : badC++;
+  let scriptChars = 0;
+  if (prof.roman) {
+    for (const w of test.words) {
+      const end = w.start + w.text.length;
+      if (end > test.typed.length) break;
+      let ok = true;
+      for (let i = w.start; i < end; i++) if (!eq(test.typed[i], test.target[i])) { ok = false; break; }
+      if (ok) scriptChars += w.hint.replace(SCRIPT_PUNCT, '').length;
+    }
+  }
+
+  const key = cfgKey();
+  const bests = store.get('typeglot-best2', {});
+  const prevBest = bests[key];
+  const isRecord = sp > 0 && (!prevBest || sp > prevBest.sp);
+  if (isRecord) { bests[key] = { sp:Math.round(sp), acc:Math.round(acc), at:Date.now() }; store.set('typeglot-best2', bests); }
+
+  ta.blur(); composing = false; compEl.hidden = true;
+  document.body.classList.remove('typing');
+  stage.hidden = true; $('#tip').hidden = true; results.hidden = false;
+  $('#rUnit').textContent = 'WPM';
+  $('#rSpeed').textContent = Math.round(sp);
+  $('#rAcc').textContent = Math.round(acc) + '%';
+  $('#rRaw').textContent = Math.round(raw);
+  $('#rChars').textContent = `${okC} / ${badC}`;
+  $('#rCons').textContent = Math.round(cons) + '%';
+  $('#rTime').textContent = (Math.round(secs * 10) / 10) + 's';
+  $('#rBest').textContent = isRecord ? (prevBest ? `${prevBest.sp} → ${Math.round(sp)}` : Math.round(sp)) : `${prevBest.sp}`;
+  $('#rCfg').textContent = cfgLabel();
+  $('#rScriptWrap').hidden = !prof.roman;
+  if (prof.roman) $('#rScript').textContent = `${Math.round(scriptChars / (secs / 60))} ${t('perMin')}`;
+  $('#rBadge').hidden = !isRecord || !prevBest;
+  drawChart(test.samples);
+  $('#nextBtn').focus({ preventScroll:true });
+}
+function cfgKey() {
+  return [settings.lang, test.mode, test.mode === 'time' ? settings.time : test.mode === 'words' ? settings.words : 'q', prof.accents && settings.fold ? 'fold' : ''].join(':');
+}
+function cfgLabel() {
+  const L = prof.L; let s = L.name;
+  if (L.scheme) s += ' · ' + t(L.scheme);
+  s += ' · ' + (test.mode === 'time' ? `${settings.time} ${t('secUnit')}` : test.mode === 'words' ? `${settings.words} ${t('wordUnit')}` : t('mQuote'));
+  return s;
+}
+
+function niceMax(v) {
+  if (v <= 0) return 10;
+  const p = Math.pow(10, Math.floor(Math.log10(v)));
+  for (const m of [1, 2, 4, 6, 8, 10]) if (m * p >= v) return m * p;
+  return 10 * p;
+}
+function drawChart(samples) {
+  const W = 680, H = 200, L = 40, R = 14, T = 12, B = 26;
+  const n = samples.length;
+  const maxY = niceMax(Math.max(...samples.map(s => Math.max(s.sp, s.raw)), 1) * 1.05);
+  const t1 = Math.max(samples[n - 1].t, 1);
+  const x = t => L + t / t1 * (W - L - R);
+  const y = v => T + (1 - v / maxY) * (H - T - B);
+  let g = '';
+  for (let k = 0; k <= 4; k++) {
+    const v = maxY * k / 4, yy = y(v).toFixed(1);
+    g += `<line class="gl" x1="${L}" x2="${W - R}" y1="${yy}" y2="${yy}"/><text class="ax" x="${L - 8}" y="${+yy + 4}" text-anchor="end">${Math.round(v)}</text>`;
+  }
+  const stepT = t1 <= 20 ? 2 : t1 <= 40 ? 5 : t1 <= 90 ? 10 : 20;
+  for (let t = stepT; t <= t1 + 0.01; t += stepT) g += `<text class="ax" x="${x(t).toFixed(1)}" y="${H - 8}" text-anchor="middle">${t}s</text>`;
+  const pts = [{ t:0, sp:samples[0].sp, raw:samples[0].raw }].concat(samples);
+  const path = key => pts.map((p, i) => (i ? 'L' : 'M') + x(p.t).toFixed(1) + ' ' + y(p[key]).toFixed(1)).join(' ');
+  const sp = path('sp');
+  const area = sp + ` L${x(pts[pts.length - 1].t).toFixed(1)} ${y(0)} L${x(0)} ${y(0)} Z`;
+  let dots = '';
+  samples.forEach(s => { if (s.err) dots += `<circle class="er" cx="${x(s.t).toFixed(1)}" cy="${y(s.sp).toFixed(1)}" r="${Math.min(3 + s.err, 6)}"><title>${t('errAt', { s:s.t, n:s.err })}</title></circle>`; });
+  const last = samples[n - 1];
+  $('#chart').innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${t('chartAria')}">${g}<path class="a-sp" d="${area}"/><path class="l-raw" d="${path('raw')}"/><path class="l-sp" d="${sp}"/>${dots}<circle class="end" cx="${x(last.t).toFixed(1)}" cy="${y(last.sp).toFixed(1)}" r="4.5"/></svg>`;
+}
+
+/* ---------------- sound ---------------- */
+let actx = null;
+const SOUND = {
+  minimal:{ type:'sine', f:1700, v:.05, d:.025 }, gallery:{ type:'triangle', f:1200, v:.05, d:.03 },
+  obsidian:{ type:'sine', f:520, v:.09, d:.05 }, aurora:{ type:'sine', f:980, v:.06, d:.06 },
+  dawn:{ type:'triangle', f:1400, v:.045, d:.035 }, celadon:{ type:'triangle', f:700, v:.07, d:.04 }
+};
+function initAudioIfWanted() {
+  if (settings.sound && !actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} }
+}
+function click(bad) {
+  if (!settings.sound || !actx) return;
+  try {
+    const c = SOUND[document.documentElement.dataset.style] || SOUND.minimal, now = actx.currentTime;
+    const o = actx.createOscillator(), g = actx.createGain();
+    o.type = c.type; o.frequency.value = bad ? c.f * 0.45 : c.f * (0.94 + Math.random() * 0.12);
+    g.gain.setValueAtTime(bad ? c.v * 1.4 : c.v, now);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + c.d);
+    o.connect(g).connect(actx.destination); o.start(now); o.stop(now + c.d + 0.02);
+  } catch (e) {}
+}
+const soundBtn = $('#soundBtn');
+function renderSound() {
+  soundBtn.setAttribute('aria-pressed', String(settings.sound));
+  $('#soundWave').style.opacity = settings.sound ? 1 : 0.2;
+}
+soundBtn.addEventListener('click', () => {
+  settings.sound = !settings.sound; save(); renderSound();
+  if (settings.sound) { initAudioIfWanted(); click(false); }
+  focusInput();
+});
+
+/* ---------------- config UI ---------------- */
+function group(id, label, opts, cur, onPick) {
+  const g = document.createElement('div'); g.className = 'grp';
+  const l = document.createElement('span'); l.className = 'grp-l'; l.textContent = label; g.appendChild(l);
+  for (const [v, name] of opts) {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'opt';
+    b.id = `opt-${id}-${v}`; b.textContent = name; b.setAttribute('aria-pressed', String(v === cur));
+    b.addEventListener('click', () => { onPick(v); save(); renderConfig(); newTest(false); });
+    g.appendChild(b);
+  }
+  cfgEl.appendChild(g); return g;
+}
+function toggle(g, id, name, val, onFlip) {
+  const b = document.createElement('button'); b.type = 'button'; b.className = 'opt tog'; b.id = 'tog-' + id;
+  b.textContent = name; b.setAttribute('aria-pressed', String(val));
+  b.addEventListener('click', () => { onFlip(); save(); renderConfig(); newTest(true); });
+  g.appendChild(b);
+}
+function renderConfig() {
+  prof = profile();
+  cfgEl.textContent = '';
+  group('lang', t('practice'), Object.entries(LANGS).map(([k, v]) => [k, v.name]), settings.lang, v => { settings.lang = v; });
+  const mode = settings.mode;
+  group('mode', t('mode'), [['time', t('mTime')], ['words', t('mWords')], ['quote', t('mQuote')]], mode, v => { settings.mode = v; });
+  if (mode === 'time') group('time', t('secs'), TIMES.map(n => [n, String(n)]), settings.time, v => { settings.time = v; });
+  if (mode === 'words') group('count', t('count'), COUNTS.map(n => [n, String(n)]), settings.words, v => { settings.words = v; });
+  if (prof.accents) {
+    const g = document.createElement('div'); g.className = 'grp';
+    const l = document.createElement('span'); l.className = 'grp-l'; l.textContent = t('options'); g.appendChild(l);
+    toggle(g, 'fold', t('fold'), settings.fold, () => { settings.fold = !settings.fold; });
+    cfgEl.appendChild(g);
+  }
+  renderTip();
+}
+function renderTip() {
+  const row = TIPS[settings.lang] || TIPS.en;
+  const tip = $('#tip'); tip.classList.remove('warn');
+  tip.lang = UI_HTML_LANG[uiLang];
+  tip.innerHTML = (row[UI_IDX[uiLang]] || row[1]) + ' ' + t('tabHint', { tab:'<kbd>Tab</kbd>' });
+}
+
+/* ---------------- appearance ---------------- */
+function lum(hex) {
+  const m = /^#?([0-9a-f]{6})$/i.exec(hex || ''); if (!m) return 1;
+  const n = parseInt(m[1], 16), ch = [n >> 16 & 255, n >> 8 & 255, n & 255].map(v => { v /= 255; return v <= .03928 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4); });
+  return .2126 * ch[0] + .7152 * ch[1] + .0722 * ch[2];
+}
+const probe = document.createElement('canvas').getContext('2d');
+function toHex(str) {
+  if (!str) return '#000000';
+  probe.fillStyle = '#000'; probe.fillStyle = str.trim();
+  const v = probe.fillStyle;
+  if (v[0] === '#') return v;
+  const m = v.match(/[\d.]+/g); if (!m) return '#000000';
+  return '#' + m.slice(0, 3).map(n => (+n | 0).toString(16).padStart(2, '0')).join('');
+}
+function currentBase() { return settings.style === 'custom' && settings.custom ? settings.custom.base : settings.style; }
+function applyAppearance() {
+  const root = document.documentElement;
+  CUSTOM_VARS.forEach(v => root.style.removeProperty(v));
+  const c = settings.style === 'custom' ? settings.custom : null;
+  const P = preset(c ? c.base : settings.style);
+  root.dataset.style = P.id;
+  root.dataset.caret = (c && c.caret) || P.caret;
+  root.dataset.fx = (c && c.fx) || P.fx;
+  root.dataset.smooth = c && c.smooth === false ? 'off' : 'on';
+  root.dataset.align = (c && c.align) || 'left';
+  visibleLines = (c && c.lines) || 3;
+  if (c) {
+    const col = c.colors || {};
+    COLOR_KEYS.forEach(k => { if (col[k]) root.style.setProperty('--' + k, col[k]); });
+    if (col.bg || col.fg) {
+      root.style.setProperty('--surface', 'color-mix(in srgb, var(--fg) 5%, var(--bg))');
+      root.style.setProperty('--muted', 'color-mix(in srgb, var(--fg) 58%, var(--bg))');
+      root.style.setProperty('--line', 'color-mix(in srgb, var(--fg) 13%, var(--bg))');
+      root.style.setProperty('--panel', 'color-mix(in srgb, var(--fg) 4%, transparent)');
+      root.style.setProperty('--panel-border', 'color-mix(in srgb, var(--fg) 10%, transparent)');
+    }
+    if (col.bg) root.style.setProperty('color-scheme', lum(col.bg) < .2 ? 'dark' : 'light');
+    if (col.error) root.style.setProperty('--error-bg', 'color-mix(in srgb, var(--error) 15%, transparent)');
+    if (col.accent) {
+      root.style.setProperty('--accent-ink', lum(col.accent) > .45 ? '#111111' : '#ffffff');
+      root.style.setProperty('--b1', 'var(--accent)');
+      root.style.setProperty('--b2', 'color-mix(in srgb, var(--accent) 45%, var(--error))');
+      root.style.setProperty('--b3', 'color-mix(in srgb, var(--accent) 35%, var(--fg))');
+    }
+    if (c.font) {
+      const f = FONTS.find(x => x[0] === c.font);
+      root.style.setProperty('--latin', `"${c.font}"`);
+      if (f && f[3]) { root.style.setProperty('--cjk-sc', '"Noto Serif SC"'); root.style.setProperty('--cjk-jp', '"Noto Serif JP"'); root.style.setProperty('--cjk-kr', '"Noto Serif KR"'); }
+      else { root.style.setProperty('--cjk-sc', '"Noto Sans SC"'); root.style.setProperty('--cjk-jp', '"Noto Sans JP"'); root.style.setProperty('--cjk-kr', '"Noto Sans KR"'); }
+    }
+    if (c.size) root.style.setProperty('--text-size', c.size + 'px');
+  }
+  requestAnimationFrame(() => requestAnimationFrame(layout));
+}
+function renderStyles() {
+  const box = $('#styles'); box.textContent = '';
+  const items = PRESETS.map(p => [p.id, t('p_' + p.id), p.sw]);
+  if (settings.custom) {
+    const c = settings.custom, P = preset(c.base);
+    items.push(['custom', t('customName'), [c.colors.bg || P.sw[0], c.colors.accent || P.sw[1]]]);
+  }
+  for (const [id, name, sw] of items) {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'sty'; b.id = 'style-' + id;
+    b.setAttribute('aria-pressed', String(settings.style === id));
+    b.title = name;
+    const s = document.createElement('span'); s.className = 'sw';
+    s.style.background = `linear-gradient(135deg, ${sw[0]} 50%, ${sw[1]} 50%)`;
+    const n = document.createElement('span'); n.className = 'nm'; n.textContent = name;
+    b.append(s, n);
+    b.addEventListener('click', () => {
+      settings.style = id; save(); applyAppearance(); renderStyles();
+      if (!drawer.hidden) fillDrawer(); else focusInput();
+    });
+    box.appendChild(b);
+  }
+}
+
+/* ---------------- customizer ---------------- */
+function ensureCustom() {
+  if (settings.style !== 'custom' || !settings.custom) {
+    settings.custom = { base:currentBase(), colors:{}, font:'', size:0, caret:'', smooth:true, lines:3, fx:'', align:'left' };
+    settings.style = 'custom';
+  }
+  return settings.custom;
+}
+function edit(fn) {
+  fn(ensureCustom());
+  save(); applyAppearance(); renderStyles(); fillDrawer();
+}
+function seg(el, opts, cur, onPick) {
+  el.textContent = '';
+  for (const [v, name] of opts) {
+    const b = document.createElement('button'); b.type = 'button'; b.textContent = name;
+    b.id = el.id + '-' + v; b.setAttribute('aria-pressed', String(v === cur));
+    b.addEventListener('click', () => onPick(v));
+    el.appendChild(b);
+  }
+}
+const cBase = $('#cBase'), cFont = $('#cFont'), cSize = $('#cSize');
+function buildDrawerOptions() {
+  cBase.textContent = ''; cFont.textContent = '';
+  PRESETS.forEach(p => cBase.add(new Option(t('p_' + p.id), p.id)));
+  FONTS.forEach(f => cFont.add(new Option(fontLabel(f), f[0])));
+}
+function fillDrawer() {
+  const c = settings.style === 'custom' ? settings.custom : null;
+  const P = preset(currentBase());
+  const root = document.documentElement, cs = getComputedStyle(root);
+  cBase.value = P.id;
+  COLOR_KEYS.forEach(k => { $('#col-' + k).value = toHex(cs.getPropertyValue('--' + k)); });
+  cFont.value = (c && c.font) || '';
+  const px = Math.round(parseFloat(getComputedStyle(wordsEl).fontSize));
+  cSize.value = px; $('#cSizeV').textContent = px + 'px';
+  seg($('#cAlign'), [['left', t('left')], ['center', t('center')]], root.dataset.align, v => edit(c => { c.align = v; }));
+  seg($('#cLines'), [[2,'2'], [3,'3'], [4,'4']], visibleLines, v => edit(c => { c.lines = v; }));
+  seg($('#cCaret'), [['line', t('cLine')], ['block', t('cBlock')], ['underline', t('cUnder')], ['none', t('cNone')]], root.dataset.caret, v => edit(c => { c.caret = v; }));
+  seg($('#cSmooth'), [['on', t('on')], ['off', t('off')]], root.dataset.smooth, v => edit(c => { c.smooth = v === 'on'; }));
+  seg($('#cFx'), [['none', t('fxNone')], ['blobs', t('fxBlobs')], ['grain', t('fxGrain')], ['blobs grain', t('fxBoth')]], root.dataset.fx, v => edit(c => { c.fx = v; }));
+  $('#cCode').value = c ? encodeTheme(c) : '';
+  $('#cCode').placeholder = c ? '' : t('codePh');
+}
+cBase.addEventListener('change', () => edit(c => { c.base = cBase.value; c.colors = {}; c.font = ''; c.size = 0; c.caret = ''; c.fx = ''; }));
+COLOR_KEYS.forEach(k => {
+  $('#col-' + k).addEventListener('input', e => {
+    const c = ensureCustom(); c.colors[k] = e.target.value;
+    save(); applyAppearance(); renderStyles();
+    $('#cCode').value = encodeTheme(c);
+  });
+});
+cFont.addEventListener('change', () => edit(c => { c.font = cFont.value; }));
+cSize.addEventListener('input', () => {
+  const c = ensureCustom(); c.size = +cSize.value; $('#cSizeV').textContent = cSize.value + 'px';
+  save(); applyAppearance(); renderStyles(); $('#cCode').value = encodeTheme(c);
+});
+
+function encodeTheme(c) {
+  try { return 'TG1.' + btoa(unescape(encodeURIComponent(JSON.stringify(c)))); } catch (e) { return ''; }
+}
+function decodeTheme(s) {
+  s = (s || '').trim();
+  if (!s.startsWith('TG1.')) throw new Error('prefix');
+  const o = JSON.parse(decodeURIComponent(escape(atob(s.slice(4)))));
+  if (!o || !PRESETS.some(p => p.id === o.base)) throw new Error('base');
+  const colors = {};
+  COLOR_KEYS.forEach(k => { if (o.colors && /^#[0-9a-f]{6}$/i.test(o.colors[k] || '')) colors[k] = o.colors[k]; });
+  return {
+    base:o.base, colors,
+    font:FONTS.some(f => f[0] === o.font) ? o.font : '',
+    size:Math.min(48, Math.max(0, +o.size || 0)),
+    caret:['line','block','underline','none'].includes(o.caret) ? o.caret : '',
+    smooth:o.smooth !== false,
+    lines:[2, 3, 4].includes(o.lines) ? o.lines : 3,
+    fx:['none','blobs','grain','blobs grain'].includes(o.fx) ? o.fx : '',
+    align:o.align === 'center' ? 'center' : 'left'
+  };
+}
+const cMsg = $('#cMsg');
+function msg(text, kind) { cMsg.textContent = text; cMsg.className = 'note ' + (kind || ''); }
+$('#cCopy').addEventListener('click', () => {
+  const inp = $('#cCode');
+  if (!inp.value) { msg(t('needEdit'), 'err'); return; }
+  const fallback = () => { inp.focus(); inp.select(); msg(t('selected')); };
+  try {
+    navigator.clipboard.writeText(inp.value).then(() => msg(t('copied'), 'ok'), fallback);
+  } catch (e) { fallback(); }
+});
+$('#cApply').addEventListener('click', () => {
+  try {
+    settings.custom = decodeTheme($('#cImport').value); settings.style = 'custom';
+    save(); applyAppearance(); renderStyles(); fillDrawer();
+    $('#cImport').value = ''; msg(t('imported'), 'ok');
+  } catch (e) { msg(t('badCode'), 'err'); }
+});
+$('#cReset').addEventListener('click', () => {
+  const base = currentBase();
+  settings.custom = null; settings.style = base;
+  save(); applyAppearance(); renderStyles(); fillDrawer(); msg(t('cleared'));
+});
+const customBtn = $('#customBtn');
+function openDrawer() {
+  drawer.hidden = false; customBtn.setAttribute('aria-expanded', 'true');
+  ta.blur(); fillDrawer(); msg('');
+  $('#drClose').focus({ preventScroll:true });
+}
+function closeDrawer() {
+  drawer.hidden = true; customBtn.setAttribute('aria-expanded', 'false');
+  focusInput();
+}
+customBtn.addEventListener('click', () => drawer.hidden ? openDrawer() : closeDrawer());
+$('#drClose').addEventListener('click', closeDrawer);
+
+const MARKS = ['字', 'A', 'あ', '가', 'É', 'Ñ'];
+let mk = 0;
+if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  setInterval(() => { mk = (mk + 1) % MARKS.length; $('#mark').textContent = MARKS[mk]; }, 2200);
+}
+
+$('#nextBtn').addEventListener('click', () => newTest(false));
+$('#againBtn').addEventListener('click', () => newTest(true));
+window.addEventListener('resize', () => layout());
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => layout());
+if (document.fonts && document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', () => layout());
+
+/* ---------------- interface language ---------------- */
+const uiSel = $('#uiLang');
+UI_LANGS.forEach(([code, name]) => uiSel.add(new Option(name, code)));
+function applyI18n() {
+  uiLang = settings.ui;
+  const root = document.documentElement;
+  root.lang = UI_HTML_LANG[uiLang]; root.dataset.ui = uiLang;
+  uiSel.value = uiLang;
+  document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-aria]').forEach(el => el.setAttribute('aria-label', t(el.dataset.i18nAria)));
+  document.querySelectorAll('[data-i18n-title]').forEach(el => el.title = t(el.dataset.i18nTitle));
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => el.placeholder = t(el.dataset.i18nPh));
+  buildDrawerOptions();
+  renderStyles(); renderConfig();
+  if (!results.hidden && test && test.finished) {
+    $('#rCfg').textContent = cfgLabel();
+    if (prof.roman) $('#rScript').textContent = $('#rScript').textContent.replace(/\s\S+$/, ' ' + t('perMin'));
+    if (test.samples.length) drawChart(test.samples);
+  }
+  if (!drawer.hidden) fillDrawer();
+  requestAnimationFrame(() => requestAnimationFrame(layout));
+}
+uiSel.addEventListener('change', () => {
+  settings.ui = uiSel.value; save(); applyI18n();
+});
+
+applyAppearance(); renderSound(); applyI18n(); newTest(false);
+})();
+</script>
+</body>
+</html>
