@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Glotkey: typing practice in English, Chinese (pinyin), Japanese (romaji), Korean (romanization), French and Spanish.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%277%27 fill=%27%230d7a64%27/%3E%3Ctext x=%2716%27 y=%2722%27 font-size=%2718%27 text-anchor=%27middle%27 fill=%27white%27 font-family=%27sans-serif%27%3ET%3C/text%3E%3C/svg%3E">
+<meta name="description" content="Glotkey: typing practice in English, Chinese (pinyin), Japanese (romaji), Korean (romanization), French, Spanish and German.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%277%27 fill=%27%230d7a64%27/%3E%3Ctext x=%2716%27 y=%2722%27 font-size=%2718%27 text-anchor=%27middle%27 fill=%27white%27 font-family=%27sans-serif%27%3EG%3C/text%3E%3C/svg%3E">
 <title>Glotkey</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -343,8 +343,86 @@ body.typing .top, body.typing .config, body.typing .tip:not(.warn), body.typing 
 .note.ok { color:var(--accent); }
 .note.err { color:var(--error); }
 
+/* layout switch */
+.layout-sw { display:flex; border:1px solid var(--line); border-radius:999px; padding:2px; gap:2px; }
+.layout-sw button {
+  display:flex; align-items:center; gap:5px; border:0; background:transparent; cursor:pointer;
+  padding:4px 10px; border-radius:999px; font-size:.78rem; color:var(--muted);
+}
+.layout-sw button:hover { color:var(--fg); }
+.layout-sw button[aria-pressed="true"] { background:var(--fg); color:var(--bg); }
+.layout-sw svg { width:13px; height:13px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; }
+
+/* zen layout: only the text, the counter and the switch */
+:root[data-layout="zen"] .brand-sub, :root[data-layout="zen"] .styles, :root[data-layout="zen"] #customBtn,
+:root[data-layout="zen"] #soundBtn, :root[data-layout="zen"] .ui-lang, :root[data-layout="zen"] .tip,
+:root[data-layout="zen"] .keys { display:none; }
+:root[data-layout="zen"] #statsBtn span { display:none; }
+:root[data-layout="zen"] .app { max-width:920px; }
+:root[data-layout="zen"] .top { border-bottom:0; padding-bottom:0; }
+:root[data-layout="zen"] .config {
+  background:transparent; border-color:transparent; -webkit-backdrop-filter:none; backdrop-filter:none;
+  justify-content:center; opacity:.4; transition:opacity .25s;
+}
+:root[data-layout="zen"] .config:hover, :root[data-layout="zen"] .config:focus-within { opacity:1; }
+:root[data-layout="zen"] .stage { padding-block:9vh 8px; }
+:root[data-layout="zen"] .live { justify-content:center; }
+:root[data-layout="zen"] .grp-l { display:none; }
+
+/* stats dashboard */
+.statsv { display:flex; flex-direction:column; gap:22px; }
+.sv-head { display:flex; justify-content:space-between; align-items:flex-start; gap:14px; flex-wrap:wrap; }
+.sv-head h2 { margin:0 0 4px; font-family:var(--font-display); font-size:1.9rem; font-weight:500; line-height:1.15; text-wrap:balance; }
+:root[data-style="gallery"] .sv-head h2, :root[data-style="dawn"] .sv-head h2 { font-style:italic; font-weight:400; font-size:2.3rem; }
+.sv-tabs { display:flex; gap:4px; flex-wrap:wrap; padding-bottom:10px; border-bottom:1px solid var(--line); }
+.sv-tabs button {
+  border:0; background:transparent; padding:6px 11px; border-radius:999px; cursor:pointer; color:var(--muted); font-size:.86rem;
+}
+.sv-tabs button:hover { color:var(--fg); }
+.sv-tabs button[aria-selected="true"] { color:var(--accent); font-weight:600; background:color-mix(in srgb, var(--accent) 12%, transparent); }
+.sv-tabs small { color:var(--dim); font-weight:400; margin-left:4px; font-variant-numeric:tabular-nums; }
+.sv-body { display:flex; flex-direction:column; gap:26px; }
+.tiles { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:12px; }
+.tile {
+  display:flex; flex-direction:column; gap:6px; padding:14px 16px;
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--panel-radius);
+  -webkit-backdrop-filter:blur(var(--panel-blur)); backdrop-filter:blur(var(--panel-blur));
+}
+.tile .k { color:var(--muted); font-size:.74rem; letter-spacing:.06em; }
+.tile .v { font-family:var(--font-display); font-size:1.9rem; line-height:1.1; font-variant-numeric:tabular-nums; }
+.tile .v small { font-size:.8rem; color:var(--muted); margin-left:4px; font-family:var(--font-ui); }
+.tile.hi .v { color:var(--accent); }
+.sv-grid { display:grid; grid-template-columns:minmax(0, 1.55fr) minmax(0, 1fr); gap:28px; }
+.card { display:flex; flex-direction:column; gap:10px; min-width:0; }
+.card > h3 { margin:0; font-size:.72rem; letter-spacing:.14em; color:var(--muted); font-weight:600; text-transform:uppercase; }
+.svchart svg { display:block; width:100%; height:auto; }
+.svchart .gl { stroke:var(--line); stroke-width:1; }
+.svchart .ax { fill:var(--muted); font-size:11px; font-family:"DM Mono", ui-monospace, monospace; }
+.svchart .pt { fill:var(--accent); opacity:.45; }
+.svchart .ma { fill:none; stroke:var(--accent); stroke-width:2.5; stroke-linejoin:round; stroke-linecap:round; }
+.svchart .bar { fill:var(--accent); opacity:.75; }
+.svchart .bar.zero { opacity:.15; }
+.tbl-wrap { overflow-x:auto; }
+.sv-table { width:100%; border-collapse:collapse; font-size:.86rem; font-variant-numeric:tabular-nums; }
+.sv-table th { text-align:left; color:var(--muted); font-weight:500; font-size:.74rem; padding:6px 8px; border-bottom:1px solid var(--line); white-space:nowrap; }
+.sv-table td { padding:8px; border-bottom:1px solid var(--line); white-space:nowrap; }
+.sv-table td.num, .sv-table th.num { text-align:right; }
+.meter { position:relative; display:inline-block; width:70px; height:6px; border-radius:3px; background:var(--line); vertical-align:middle; margin-left:8px; overflow:hidden; }
+.meter i { position:absolute; inset:0 auto 0 0; background:var(--accent); border-radius:3px; }
+.miss-list { display:flex; flex-wrap:wrap; gap:8px; }
+.miss { display:flex; align-items:baseline; gap:8px; padding:6px 11px; border:1px solid var(--line); border-radius:8px; }
+.miss b { font-family:var(--latin), var(--cjk-sc), monospace; font-size:1.25rem; font-weight:500; color:var(--error); }
+.miss span { color:var(--muted); font-size:.8rem; font-variant-numeric:tabular-nums; }
+.sv-empty { padding:36px 0; color:var(--muted); font-size:.95rem; }
+.sv-actions { display:flex; gap:10px; flex-wrap:wrap; align-items:center; padding-top:4px; border-top:1px solid var(--line); padding-top:16px; }
+.confirm { display:flex; gap:8px; align-items:center; flex-wrap:wrap; color:var(--error); font-size:.85rem; }
+.mini.danger { border-color:var(--error); color:var(--error); }
+#svDump { width:100%; min-height:70px; font-family:"DM Mono", monospace; font-size:.75rem; background:var(--surface); border:1px solid var(--line); border-radius:8px; }
+@media (max-width:760px) { .sv-grid { grid-template-columns:minmax(0, 1fr); } }
+
 @media (max-width:1020px) {
   .brand-sub { display:none; }
+  .layout-sw span { display:none; }
 }
 @media (max-width:640px) {
   :root { --text-size:1.3rem; }
@@ -372,6 +450,14 @@ body.typing .top, body.typing .config, body.typing .tip:not(.warn), body.typing 
       <span class="brand-sub" data-i18n="brandSub"></span>
     </div>
     <div class="styles" id="styles" role="group" data-i18n-aria="stylesLabel"></div>
+    <div class="layout-sw" id="layoutSw" role="group" data-i18n-aria="layout">
+      <button type="button" id="layout-std" aria-pressed="true"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="2" width="13" height="3" rx="1"/><rect x="1.5" y="7" width="13" height="7" rx="1"/></svg><span data-i18n="layoutStd"></span></button>
+      <button type="button" id="layout-zen" aria-pressed="false"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10"/></svg><span data-i18n="layoutZen"></span></button>
+    </div>
+    <button class="icon-btn" id="statsBtn" type="button" aria-pressed="false" data-i18n-title="statsTitle">
+      <svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+      <span data-i18n="stats"></span>
+    </button>
     <button class="icon-btn" id="customBtn" type="button" aria-expanded="false" data-i18n-title="drTitle">
       <svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>
       <span data-i18n="custom"></span>
@@ -425,6 +511,29 @@ body.typing .top, body.typing .config, body.typing .tip:not(.warn), body.typing 
     <div class="res-actions">
       <button class="btn" id="nextBtn" type="button" data-i18n="next"></button>
       <button class="btn ghost" id="againBtn" type="button" data-i18n="again"></button>
+    </div>
+  </section>
+
+  <section class="statsv" id="statsView" hidden data-i18n-aria="statsTitle">
+    <div class="sv-head">
+      <div>
+        <h2 data-i18n="statsTitle"></h2>
+        <p class="note" data-i18n="statsNote"></p>
+      </div>
+      <button class="btn ghost" id="statsBack" type="button" data-i18n="back"></button>
+    </div>
+    <div class="sv-tabs" id="svTabs" role="tablist"></div>
+    <div class="sv-body" id="svBody"></div>
+    <div class="sv-actions">
+      <button class="mini" id="svCopy" type="button" data-i18n="copyData"></button>
+      <button class="mini" id="svClear" type="button" data-i18n="clearData"></button>
+      <span class="confirm" id="svConfirm" hidden>
+        <span data-i18n="clearAsk"></span>
+        <button class="mini danger" id="svClearYes" type="button" data-i18n="confirmClear"></button>
+        <button class="mini" id="svClearNo" type="button" data-i18n="cancel"></button>
+      </span>
+      <textarea id="svDump" readonly hidden aria-label="JSON"></textarea>
+      <span class="note" id="svMsg"></span>
     </div>
   </section>
 
@@ -576,135 +685,189 @@ const JA_Q = [
   "古池や|furuikeya 蛙飛び込む|kawazutobikomu 水の音|mizunooto",
   "今日も|kyoumo 一日、|ichinichi, 楽しく|tanoshiku 過ごしましょう。|sugoshimashou."
 ];
+const DE = "der die das und ist nicht ein eine ich du er sie es wir ihr mit von zu auf für an im in dem den sich auch als noch nach bei aus wie so aber oder wenn dann nur schon sehr mehr hier jetzt immer wieder heute morgen gut groß klein neu alt lang kurz schnell langsam Haus Zeit Jahr Tag Welt Leben Hand Kind Frau Mann Freund Schule Arbeit Stadt Land Wasser Brot Buch Musik Sonne Mond Baum Blume Straße Fenster Tür Tisch Stuhl Apfel Kaffee Milch Zug Auto Fahrrad Reise Sprache Wort Satz Frage Antwort Geschichte Familie Mutter Vater Bruder Schwester Liebe Glück Traum Herz Kopf Auge Stimme Farbe Wald Berg Fluss Meer Himmel Regen Schnee Winter Sommer Frühling Herbst Abend Nacht Woche Monat schön müde froh warm kalt leicht schwer spielen lernen lesen schreiben sprechen hören sehen gehen kommen machen sagen geben nehmen finden denken wissen können müssen wollen möchten Tastatur üben Übung Größe Mädchen Bäcker fünf Grüße".split(' ');
+const DE_Q = [
+  "Übung macht den Meister.",
+  "Aller Anfang ist schwer.",
+  "Morgenstund hat Gold im Mund.",
+  "Wer rastet, der rostet.",
+  "Ende gut, alles gut.",
+  "Eile mit Weile.",
+  "Was du heute kannst besorgen, das verschiebe nicht auf morgen.",
+  "Jeden Tag ein bisschen üben, und die Finger finden ihren Weg.",
+  "Der Weg ist das Ziel.",
+  "Viele Wege führen nach Rom, aber jeder beginnt mit dem ersten Schritt."
+];
 
 /* ---------------- interface translations ----------------
-   Each entry: [中文, English, 日本語, 한국어, Français, Español] */
-const UI_LANGS = [['zh', '中文'], ['en', 'English'], ['ja', '日本語'], ['ko', '한국어'], ['fr', 'Français'], ['es', 'Español']];
-const UI_HTML_LANG = { zh:'zh-CN', en:'en', ja:'ja', ko:'ko', fr:'fr', es:'es' };
+   Each entry: [中文, English, 日本語, 한국어, Français, Español, Deutsch] */
+const UI_LANGS = [['zh', '中文'], ['en', 'English'], ['ja', '日本語'], ['ko', '한국어'], ['fr', 'Français'], ['es', 'Español'], ['de', 'Deutsch']];
+const UI_HTML_LANG = { zh:'zh-CN', en:'en', ja:'ja', ko:'ko', fr:'fr', es:'es', de:'de' };
 const I18N = {
-  brandSub:   ['六种语言的打字练习', 'Typing practice in six languages', '6か国語のタイピング練習', '6개 언어 타자 연습', 'Dactylographie en six langues', 'Mecanografía en seis idiomas'],
-  custom:     ['自定义', 'Customize', 'カスタマイズ', '사용자 설정', 'Personnaliser', 'Personalizar'],
-  customName: ['自定义', 'Custom', 'カスタム', '사용자', 'Perso', 'Personal'],
-  sound:      ['音效', 'Sound', '効果音', '효과음', 'Son', 'Sonido'],
-  soundTitle: ['按键音效', 'Key sounds', 'キー音', '키 소리', 'Sons des touches', 'Sonido de teclas'],
-  uiLang:     ['界面语言', 'Interface language', '表示言語', '화면 언어', "Langue de l'interface", 'Idioma de la interfaz'],
-  stylesLabel:['风格预设', 'Style presets', 'スタイル', '스타일', 'Styles', 'Estilos'],
-  setupAria:  ['练习设置', 'Practice settings', '練習の設定', '연습 설정', "Réglages d'entraînement", 'Ajustes de práctica'],
-  resultsAria:['本次成绩', 'Your result', '今回の結果', '이번 결과', 'Votre résultat', 'Tu resultado'],
-  practice:   ['练习语言', 'Practice', '練習言語', '연습 언어', 'Langue', 'Idioma'],
-  mode:       ['模式', 'Mode', 'モード', '모드', 'Mode', 'Modo'],
-  mTime:      ['限时', 'Time', '時間', '시간', 'Temps', 'Tiempo'],
-  mWords:     ['词数', 'Words', '単語数', '단어 수', 'Mots', 'Palabras'],
-  mQuote:     ['句子', 'Quote', '名言', '문장', 'Citation', 'Frase'],
-  secs:       ['秒', 'Seconds', '秒', '초', 'Secondes', 'Segundos'],
-  count:      ['数量', 'Count', '数', '개수', 'Nombre', 'Cantidad'],
-  options:    ['选项', 'Options', 'オプション', '옵션', 'Options', 'Opciones'],
-  fold:       ['忽略重音', 'Ignore accents', 'アクセント無視', '악센트 무시', 'Ignorer les accents', 'Ignorar acentos'],
-  focusHint:  ['点击这里，或直接按任意键开始', 'Click here or press any key to start', 'ここをクリックするか、任意のキーで開始', '여기를 클릭하거나 아무 키나 눌러 시작하세요', 'Cliquez ici ou appuyez sur une touche pour commencer', 'Haz clic aquí o pulsa cualquier tecla para empezar'],
-  typeHere:   ['在这里输入', 'Type here', 'ここに入力', '여기에 입력', 'Tapez ici', 'Escribe aquí'],
-  accuracy:   ['准确率', 'Accuracy', '正確率', '정확도', 'Précision', 'Precisión'],
-  newRecord:  ['新纪录', 'New best', '自己ベスト', '신기록', 'Nouveau record', 'Nuevo récord'],
-  lgSpeed:    ['累计速度', 'Overall speed', '累計速度', '누적 속도', 'Vitesse cumulée', 'Velocidad acumulada'],
-  lgRaw:      ['每秒原始速度', 'Raw speed each second', '毎秒の生の速度', '초당 원시 속도', 'Vitesse brute par seconde', 'Velocidad bruta por segundo'],
-  lgErr:      ['当秒有错误', 'Errors in that second', 'その秒のミス', '그 초의 오류', 'Erreurs dans la seconde', 'Errores en ese segundo'],
-  raw:        ['原始速度', 'Raw speed', '生の速度', '원시 속도', 'Vitesse brute', 'Velocidad bruta'],
-  script:     ['折合原文', 'In original script', '原文換算', '원문 환산', "En écriture d'origine", 'En escritura original'],
-  chars:      ['字符 正确 / 错误', 'Characters right / wrong', '文字 正解 / ミス', '글자 정답 / 오답', 'Caractères justes / faux', 'Caracteres bien / mal'],
-  cons:       ['稳定性', 'Consistency', '安定性', '일관성', 'Régularité', 'Constancia'],
-  timeUsed:   ['用时', 'Time', '所要時間', '소요 시간', 'Durée', 'Tiempo'],
-  best:       ['本设置最佳', 'Best for this setup', 'この設定の最高記録', '이 설정 최고 기록', 'Record pour ce réglage', 'Mejor con este ajuste'],
-  setup:      ['设置', 'Setup', '設定', '설정', 'Réglage', 'Ajuste'],
-  next:       ['换一组', 'New text', '次のテキスト', '새 문장', 'Nouveau texte', 'Nuevo texto'],
-  again:      ['重打这一组', 'Retry this text', 'もう一度', '다시 하기', 'Recommencer', 'Repetir'],
-  local:      ['成绩和外观设置只保存在你的浏览器里', 'Scores and appearance are saved only in your browser', '記録と外観の設定はこのブラウザにだけ保存されます', '기록과 외관 설정은 이 브라우저에만 저장됩니다', 'Scores et apparence restent dans votre navigateur', 'Las puntuaciones y la apariencia se guardan solo en tu navegador'],
-  tabHint:    ['按 {tab} 换一组。', 'Press {tab} for a new text.', '{tab} で次のテキスト。', '{tab} 키로 새 문장.', '{tab} pour un nouveau texte.', '{tab} para un texto nuevo.'],
+  brandSub:   ['七种语言的打字练习', 'Typing practice in seven languages', '7か国語のタイピング練習', '7개 언어 타자 연습', 'Dactylographie en sept langues', 'Mecanografía en siete idiomas', 'Tippen üben in sieben Sprachen'],
+  custom:     ['自定义', 'Customize', 'カスタマイズ', '사용자 설정', 'Personnaliser', 'Personalizar', 'Anpassen'],
+  customName: ['自定义', 'Custom', 'カスタム', '사용자', 'Perso', 'Personal', 'Eigenes'],
+  sound:      ['音效', 'Sound', '効果音', '효과음', 'Son', 'Sonido', 'Ton'],
+  soundTitle: ['按键音效', 'Key sounds', 'キー音', '키 소리', 'Sons des touches', 'Sonido de teclas', 'Tastentöne'],
+  uiLang:     ['界面语言', 'Interface language', '表示言語', '화면 언어', "Langue de l'interface", 'Idioma de la interfaz', 'Sprache der Oberfläche'],
+  stylesLabel:['风格预设', 'Style presets', 'スタイル', '스타일', 'Styles', 'Estilos', 'Stile'],
+  setupAria:  ['练习设置', 'Practice settings', '練習の設定', '연습 설정', "Réglages d'entraînement", 'Ajustes de práctica', 'Übungseinstellungen'],
+  resultsAria:['本次成绩', 'Your result', '今回の結果', '이번 결과', 'Votre résultat', 'Tu resultado', 'Dein Ergebnis'],
+  practice:   ['练习语言', 'Practice', '練習言語', '연습 언어', 'Langue', 'Idioma', 'Sprache'],
+  mode:       ['模式', 'Mode', 'モード', '모드', 'Mode', 'Modo', 'Modus'],
+  mTime:      ['限时', 'Time', '時間', '시간', 'Temps', 'Tiempo', 'Zeit'],
+  mWords:     ['词数', 'Words', '単語数', '단어 수', 'Mots', 'Palabras', 'Wörter'],
+  mQuote:     ['句子', 'Quote', '名言', '문장', 'Citation', 'Frase', 'Zitat'],
+  secs:       ['秒', 'Seconds', '秒', '초', 'Secondes', 'Segundos', 'Sekunden'],
+  count:      ['数量', 'Count', '数', '개수', 'Nombre', 'Cantidad', 'Anzahl'],
+  options:    ['选项', 'Options', 'オプション', '옵션', 'Options', 'Opciones', 'Optionen'],
+  fold:       ['忽略重音', 'Ignore accents', 'アクセント無視', '악센트 무시', 'Ignorer les accents', 'Ignorar acentos', 'Akzente ignorieren'],
+  focusHint:  ['点击这里，或直接按任意键开始', 'Click here or press any key to start', 'ここをクリックするか、任意のキーで開始', '여기를 클릭하거나 아무 키나 눌러 시작하세요', 'Cliquez ici ou appuyez sur une touche pour commencer', 'Haz clic aquí o pulsa cualquier tecla para empezar', 'Hier klicken oder eine beliebige Taste drücken'],
+  typeHere:   ['在这里输入', 'Type here', 'ここに入力', '여기에 입력', 'Tapez ici', 'Escribe aquí', 'Hier tippen'],
+  accuracy:   ['准确率', 'Accuracy', '正確率', '정확도', 'Précision', 'Precisión', 'Genauigkeit'],
+  newRecord:  ['新纪录', 'New best', '自己ベスト', '신기록', 'Nouveau record', 'Nuevo récord', 'Neuer Rekord'],
+  lgSpeed:    ['累计速度', 'Overall speed', '累計速度', '누적 속도', 'Vitesse cumulée', 'Velocidad acumulada', 'Gesamttempo'],
+  lgRaw:      ['每秒原始速度', 'Raw speed each second', '毎秒の生の速度', '초당 원시 속도', 'Vitesse brute par seconde', 'Velocidad bruta por segundo', 'Rohtempo pro Sekunde'],
+  lgErr:      ['当秒有错误', 'Errors in that second', 'その秒のミス', '그 초의 오류', 'Erreurs dans la seconde', 'Errores en ese segundo', 'Fehler in dieser Sekunde'],
+  raw:        ['原始速度', 'Raw speed', '生の速度', '원시 속도', 'Vitesse brute', 'Velocidad bruta', 'Rohtempo'],
+  script:     ['折合原文', 'In original script', '原文換算', '원문 환산', "En écriture d'origine", 'En escritura original', 'In Originalschrift'],
+  chars:      ['字符 正确 / 错误', 'Characters right / wrong', '文字 正解 / ミス', '글자 정답 / 오답', 'Caractères justes / faux', 'Caracteres bien / mal', 'Zeichen richtig / falsch'],
+  cons:       ['稳定性', 'Consistency', '安定性', '일관성', 'Régularité', 'Constancia', 'Gleichmäßigkeit'],
+  timeUsed:   ['用时', 'Time', '所要時間', '소요 시간', 'Durée', 'Tiempo', 'Zeit'],
+  best:       ['本设置最佳', 'Best for this setup', 'この設定の最高記録', '이 설정 최고 기록', 'Record pour ce réglage', 'Mejor con este ajuste', 'Bestwert für diese Einstellung'],
+  setup:      ['设置', 'Setup', '設定', '설정', 'Réglage', 'Ajuste', 'Einstellung'],
+  next:       ['换一组', 'New text', '次のテキスト', '새 문장', 'Nouveau texte', 'Nuevo texto', 'Neuer Text'],
+  again:      ['重打这一组', 'Retry this text', 'もう一度', '다시 하기', 'Recommencer', 'Repetir', 'Wiederholen'],
+  local:      ['成绩和外观设置只保存在你的浏览器里', 'Scores and appearance are saved only in your browser', '記録と外観の設定はこのブラウザにだけ保存されます', '기록과 외관 설정은 이 브라우저에만 저장됩니다', 'Scores et apparence restent dans votre navigateur', 'Las puntuaciones y la apariencia se guardan solo en tu navegador', 'Ergebnisse und Aussehen bleiben nur in deinem Browser'],
+  tabHint:    ['按 {tab} 换一组。', 'Press {tab} for a new text.', '{tab} で次のテキスト。', '{tab} 키로 새 문장.', '{tab} pour un nouveau texte.', '{tab} para un texto nuevo.', '{tab} für einen neuen Text.'],
   imeWarn:    ['检测到输入法正在组字。本站全部用字母直接输入，请切换到英文键盘（中文输入法可按 {shift} 切到英文）。',
                'An input method is composing text. This site is typed with plain letters only, so switch to an English keyboard layout.',
                'IME が変換中です。このサイトはアルファベットで直接入力します。英字入力に切り替えてください。',
                '입력기가 조합 중입니다. 이 사이트는 알파벳으로 바로 입력하니 영문 자판으로 바꿔 주세요.',
                'Un éditeur de saisie (IME) compose du texte. Ce site se tape uniquement en lettres latines : passez à un clavier latin.',
-               'Un método de entrada (IME) está componiendo texto. Este sitio se escribe solo con letras latinas: cambia a un teclado latino.'],
-  drTitle:    ['自定义外观', 'Customize appearance', '外観のカスタマイズ', '외관 사용자 설정', "Personnaliser l'apparence", 'Personalizar la apariencia'],
-  done:       ['完成', 'Done', '完了', '완료', 'Terminé', 'Listo'],
+               'Un método de entrada (IME) está componiendo texto. Este sitio se escribe solo con letras latinas: cambia a un teclado latino.',
+               'Eine Eingabemethode (IME) setzt gerade Zeichen zusammen. Diese Seite wird nur mit lateinischen Buchstaben getippt: Wechsle zu einer lateinischen Tastatur.'],
+  drTitle:    ['自定义外观', 'Customize appearance', '外観のカスタマイズ', '외관 사용자 설정', "Personnaliser l'apparence", 'Personalizar la apariencia', 'Aussehen anpassen'],
+  done:       ['完成', 'Done', '完了', '완료', 'Terminé', 'Listo', 'Fertig'],
   drNote:     ['改动会立即生效，并保存为“自定义”风格。随时可以点上方的预设切回去。',
                'Changes apply instantly and are saved as the “Custom” style. Pick a preset above any time to switch back.',
                '変更はすぐに反映され、「カスタム」として保存されます。上のプリセットでいつでも戻せます。',
                '변경 사항은 바로 적용되고 ‘사용자’ 스타일로 저장됩니다. 위의 프리셋으로 언제든 돌아갈 수 있습니다.',
                'Les changements s’appliquent aussitôt et sont enregistrés comme style « Perso ». Choisissez un style en haut pour revenir.',
-               'Los cambios se aplican al instante y se guardan como estilo «Personal». Elige un estilo arriba para volver.'],
-  start:      ['起点', 'Starting point', 'ベース', '시작점', 'Point de départ', 'Punto de partida'],
-  basePreset: ['基于预设', 'Based on', '元のプリセット', '기본 프리셋', 'Basé sur', 'Basado en'],
-  colors:     ['颜色', 'Colors', '色', '색상', 'Couleurs', 'Colores'],
-  colBg:      ['背景', 'Background', '背景', '배경', 'Fond', 'Fondo'],
-  colFg:      ['已打', 'Typed', '入力済み', '입력됨', 'Tapé', 'Escrito'],
-  colDim:     ['未打', 'Untyped', '未入力', '미입력', 'À taper', 'Pendiente'],
-  colAccent:  ['强调', 'Accent', 'アクセント', '강조', 'Accent', 'Acento'],
-  colError:   ['错误', 'Error', 'ミス', '오류', 'Erreur', 'Error'],
-  text:       ['文字', 'Text', '文字', '글자', 'Texte', 'Texto'],
-  font:       ['字体', 'Font', 'フォント', '글꼴', 'Police', 'Fuente'],
-  size:       ['字号', 'Size', 'サイズ', '크기', 'Taille', 'Tamaño'],
-  align:      ['对齐', 'Alignment', '配置', '정렬', 'Alignement', 'Alineación'],
-  lines:      ['显示行数', 'Visible lines', '表示行数', '표시 줄 수', 'Lignes visibles', 'Líneas visibles'],
-  caret:      ['光标', 'Caret', 'カーソル', '커서', 'Curseur', 'Cursor'],
-  shape:      ['形状', 'Shape', '形', '모양', 'Forme', 'Forma'],
-  smooth:     ['平滑移动', 'Smooth motion', 'なめらかに移動', '부드럽게 이동', 'Mouvement fluide', 'Movimiento suave'],
-  ambience:   ['氛围', 'Ambience', '雰囲気', '분위기', 'Ambiance', 'Ambiente'],
-  fx:         ['背景效果', 'Background effect', '背景効果', '배경 효과', 'Effet de fond', 'Efecto de fondo'],
-  share:      ['分享主题', 'Share theme', 'テーマを共有', '테마 공유', 'Partager le thème', 'Compartir tema'],
-  copy:       ['复制', 'Copy', 'コピー', '복사', 'Copier', 'Copiar'],
-  import:     ['导入', 'Import', '読み込む', '가져오기', 'Importer', 'Importar'],
-  importPh:   ['粘贴别人的主题代码', 'Paste a theme code', 'テーマコードを貼り付け', '테마 코드 붙여넣기', 'Collez un code de thème', 'Pega un código de tema'],
-  codePh:     ['改动任意一项后生成主题代码', 'A code appears once you change something', '設定を変えるとコードが表示されます', '설정을 바꾸면 코드가 나타납니다', 'Un code apparaît après une modification', 'Aparece un código al cambiar algo'],
-  reset:      ['清除自定义，回到预设', 'Clear custom style, back to preset', 'カスタムを消してプリセットに戻す', '사용자 설정 지우고 프리셋으로', 'Effacer le style perso', 'Borrar el estilo personal'],
-  left:       ['靠左', 'Left', '左', '왼쪽', 'Gauche', 'Izquierda'],
-  center:     ['居中', 'Center', '中央', '가운데', 'Centre', 'Centro'],
-  cLine:      ['竖线', 'Bar', '縦線', '세로선', 'Barre', 'Barra'],
-  cBlock:     ['方块', 'Block', 'ブロック', '블록', 'Bloc', 'Bloque'],
-  cUnder:     ['下划线', 'Underline', '下線', '밑줄', 'Souligné', 'Subrayado'],
-  cNone:      ['隐藏', 'Hidden', '非表示', '숨김', 'Masqué', 'Oculto'],
-  on:         ['开', 'On', 'オン', '켜기', 'Oui', 'Sí'],
-  off:        ['关', 'Off', 'オフ', '끄기', 'Non', 'No'],
-  fxNone:     ['无', 'None', 'なし', '없음', 'Aucun', 'Ninguno'],
-  fxBlobs:    ['光晕', 'Glow', '光', '빛', 'Halo', 'Halo'],
-  fxGrain:    ['颗粒', 'Grain', '粒子', '입자', 'Grain', 'Grano'],
-  fxBoth:     ['光晕+颗粒', 'Glow + grain', '光＋粒子', '빛+입자', 'Halo + grain', 'Halo + grano'],
-  fontFollow: ['跟随预设', 'Preset default', 'プリセット通り', '프리셋 기본값', 'Selon le style', 'Según el estilo'],
-  fMono:      ['等宽', 'mono', '等幅', '고정폭', 'chasse fixe', 'monoespaciada'],
-  fSans:      ['无衬线', 'sans', 'ゴシック', '고딕', 'sans empattement', 'sin serifa'],
-  fSerif:     ['衬线', 'serif', '明朝', '명조', 'à empattement', 'con serifa'],
-  fClassic:   ['古典衬线', 'classic serif', 'クラシック明朝', '클래식 명조', 'classique', 'clásica'],
-  fEditorial: ['杂志衬线', 'editorial serif', '雑誌風明朝', '잡지풍 명조', 'éditoriale', 'editorial'],
-  p_minimal:  ['极简', 'Minimal', 'ミニマル', '미니멀', 'Minimal', 'Minimal'],
-  p_gallery:  ['画廊', 'Gallery', 'ギャラリー', '갤러리', 'Galerie', 'Galería'],
-  p_obsidian: ['曜石', 'Obsidian', '黒曜石', '흑요석', 'Obsidienne', 'Obsidiana'],
-  p_aurora:   ['极光', 'Aurora', 'オーロラ', '오로라', 'Aurore', 'Aurora'],
-  p_dawn:     ['晨雾', 'Dawn', '朝霧', '새벽 안개', 'Aube', 'Alba'],
-  p_celadon:  ['青瓷', 'Celadon', '青磁', '청자', 'Céladon', 'Celadón'],
-  needEdit:   ['先改动任意一项，才会生成主题代码。', 'Change any setting first to create a theme code.', 'いずれかの設定を変えるとテーマコードが作られます。', '설정을 하나 바꾸면 테마 코드가 만들어집니다.', 'Modifiez un réglage pour créer un code de thème.', 'Cambia algún ajuste para crear un código de tema.'],
-  copied:     ['已复制。发给朋友，对方在这里粘贴导入即可。', 'Copied. Send it to a friend; they can paste it here to import.', 'コピーしました。友達に送れば、ここに貼り付けて読み込めます。', '복사했습니다. 친구에게 보내면 여기에 붙여넣어 가져올 수 있습니다.', 'Copié. Envoyez-le à un ami : il pourra le coller ici.', 'Copiado. Envíalo a un amigo y podrá pegarlo aquí.'],
-  selected:   ['已选中代码，按 Ctrl+C（Mac 上 ⌘C）复制。', 'Code selected. Press Ctrl+C (⌘C on Mac) to copy.', 'コードを選択しました。Ctrl+C（Mac は ⌘C）でコピーしてください。', '코드를 선택했습니다. Ctrl+C(Mac은 ⌘C)로 복사하세요.', 'Code sélectionné. Appuyez sur Ctrl+C (⌘C sur Mac).', 'Código seleccionado. Pulsa Ctrl+C (⌘C en Mac).'],
-  imported:   ['已导入并应用。', 'Imported and applied.', '読み込んで適用しました。', '가져와서 적용했습니다.', 'Importé et appliqué.', 'Importado y aplicado.'],
-  badCode:    ['这段代码无法识别。主题代码以 TG1. 开头，请完整复制后再试。', 'This code is not recognized. Theme codes start with TG1. Copy the whole code and try again.', 'このコードは読み込めません。テーマコードは TG1. で始まります。全体をコピーしてもう一度お試しください。', '이 코드는 인식할 수 없습니다. 테마 코드는 TG1.로 시작합니다. 전체를 복사해 다시 시도하세요.', 'Code non reconnu. Les codes de thème commencent par TG1. Copiez le code en entier et réessayez.', 'Código no reconocido. Los códigos de tema empiezan por TG1. Copia el código completo e inténtalo de nuevo.'],
-  cleared:    ['已清除自定义。', 'Custom style cleared.', 'カスタムを消去しました。', '사용자 설정을 지웠습니다.', 'Style perso effacé.', 'Estilo personal borrado.'],
-  secUnit:    ['秒', 's', '秒', '초', 's', 's'],
-  wordUnit:   ['词', 'words', '語', '단어', 'mots', 'palabras'],
-  sPinyin:    ['拼音', 'Pinyin', 'ピンイン', '병음', 'Pinyin', 'Pinyin'],
-  sRomaji:    ['罗马字', 'Romaji', 'ローマ字', '로마자', 'Romaji', 'Romaji'],
-  sKoRoman:   ['罗马字', 'Romanization', 'ローマ字', '로마자', 'Romanisation', 'Romanización'],
-  perMin:     ['字/分', 'chars/min', '字/分', '자/분', 'car./min', 'car./min'],
-  errAt:      ['{s}s：{n} 处错误', '{s}s: {n} errors', '{s}秒：ミス {n}', '{s}초: 오류 {n}개', '{s} s : {n} erreurs', '{s} s: {n} errores'],
-  chartAria:  ['速度随时间变化的折线图', 'Line chart of speed over time', '時間ごとの速度の折れ線グラフ', '시간에 따른 속도 꺾은선 그래프', 'Courbe de vitesse dans le temps', 'Gráfico de velocidad en el tiempo'],
+               'Los cambios se aplican al instante y se guardan como estilo «Personal». Elige un estilo arriba para volver.',
+               'Änderungen wirken sofort und werden als Stil „Eigenes“ gespeichert. Oben kannst du jederzeit zu einem Stil zurückwechseln.'],
+  start:      ['起点', 'Starting point', 'ベース', '시작점', 'Point de départ', 'Punto de partida', 'Ausgangspunkt'],
+  basePreset: ['基于预设', 'Based on', '元のプリセット', '기본 프리셋', 'Basé sur', 'Basado en', 'Basiert auf'],
+  colors:     ['颜色', 'Colors', '色', '색상', 'Couleurs', 'Colores', 'Farben'],
+  colBg:      ['背景', 'Background', '背景', '배경', 'Fond', 'Fondo', 'Hintergrund'],
+  colFg:      ['已打', 'Typed', '入力済み', '입력됨', 'Tapé', 'Escrito', 'Getippt'],
+  colDim:     ['未打', 'Untyped', '未入力', '미입력', 'À taper', 'Pendiente', 'Offen'],
+  colAccent:  ['强调', 'Accent', 'アクセント', '강조', 'Accent', 'Acento', 'Akzent'],
+  colError:   ['错误', 'Error', 'ミス', '오류', 'Erreur', 'Error', 'Fehler'],
+  text:       ['文字', 'Text', '文字', '글자', 'Texte', 'Texto', 'Text'],
+  font:       ['字体', 'Font', 'フォント', '글꼴', 'Police', 'Fuente', 'Schrift'],
+  size:       ['字号', 'Size', 'サイズ', '크기', 'Taille', 'Tamaño', 'Größe'],
+  align:      ['对齐', 'Alignment', '配置', '정렬', 'Alignement', 'Alineación', 'Ausrichtung'],
+  lines:      ['显示行数', 'Visible lines', '表示行数', '표시 줄 수', 'Lignes visibles', 'Líneas visibles', 'Sichtbare Zeilen'],
+  caret:      ['光标', 'Caret', 'カーソル', '커서', 'Curseur', 'Cursor', 'Cursor'],
+  shape:      ['形状', 'Shape', '形', '모양', 'Forme', 'Forma', 'Form'],
+  smooth:     ['平滑移动', 'Smooth motion', 'なめらかに移動', '부드럽게 이동', 'Mouvement fluide', 'Movimiento suave', 'Weiche Bewegung'],
+  ambience:   ['氛围', 'Ambience', '雰囲気', '분위기', 'Ambiance', 'Ambiente', 'Atmosphäre'],
+  fx:         ['背景效果', 'Background effect', '背景効果', '배경 효과', 'Effet de fond', 'Efecto de fondo', 'Hintergrundeffekt'],
+  share:      ['分享主题', 'Share theme', 'テーマを共有', '테마 공유', 'Partager le thème', 'Compartir tema', 'Thema teilen'],
+  copy:       ['复制', 'Copy', 'コピー', '복사', 'Copier', 'Copiar', 'Kopieren'],
+  import:     ['导入', 'Import', '読み込む', '가져오기', 'Importer', 'Importar', 'Importieren'],
+  importPh:   ['粘贴别人的主题代码', 'Paste a theme code', 'テーマコードを貼り付け', '테마 코드 붙여넣기', 'Collez un code de thème', 'Pega un código de tema', 'Themencode einfügen'],
+  codePh:     ['改动任意一项后生成主题代码', 'A code appears once you change something', '設定を変えるとコードが表示されます', '설정을 바꾸면 코드가 나타납니다', 'Un code apparaît après une modification', 'Aparece un código al cambiar algo', 'Ein Code erscheint, sobald du etwas änderst'],
+  reset:      ['清除自定义，回到预设', 'Clear custom style, back to preset', 'カスタムを消してプリセットに戻す', '사용자 설정 지우고 프리셋으로', 'Effacer le style perso', 'Borrar el estilo personal', 'Eigenen Stil löschen'],
+  left:       ['靠左', 'Left', '左', '왼쪽', 'Gauche', 'Izquierda', 'Links'],
+  center:     ['居中', 'Center', '中央', '가운데', 'Centre', 'Centro', 'Mitte'],
+  cLine:      ['竖线', 'Bar', '縦線', '세로선', 'Barre', 'Barra', 'Strich'],
+  cBlock:     ['方块', 'Block', 'ブロック', '블록', 'Bloc', 'Bloque', 'Block'],
+  cUnder:     ['下划线', 'Underline', '下線', '밑줄', 'Souligné', 'Subrayado', 'Unterstrich'],
+  cNone:      ['隐藏', 'Hidden', '非表示', '숨김', 'Masqué', 'Oculto', 'Aus'],
+  on:         ['开', 'On', 'オン', '켜기', 'Oui', 'Sí', 'An'],
+  off:        ['关', 'Off', 'オフ', '끄기', 'Non', 'No', 'Aus'],
+  fxNone:     ['无', 'None', 'なし', '없음', 'Aucun', 'Ninguno', 'Keiner'],
+  fxBlobs:    ['光晕', 'Glow', '光', '빛', 'Halo', 'Halo', 'Leuchten'],
+  fxGrain:    ['颗粒', 'Grain', '粒子', '입자', 'Grain', 'Grano', 'Körnung'],
+  fxBoth:     ['光晕+颗粒', 'Glow + grain', '光＋粒子', '빛+입자', 'Halo + grain', 'Halo + grano', 'Leuchten + Körnung'],
+  fontFollow: ['跟随预设', 'Preset default', 'プリセット通り', '프리셋 기본값', 'Selon le style', 'Según el estilo', 'Wie im Stil'],
+  fMono:      ['等宽', 'mono', '等幅', '고정폭', 'chasse fixe', 'monoespaciada', 'Festbreite'],
+  fSans:      ['无衬线', 'sans', 'ゴシック', '고딕', 'sans empattement', 'sin serifa', 'serifenlos'],
+  fSerif:     ['衬线', 'serif', '明朝', '명조', 'à empattement', 'con serifa', 'Serife'],
+  fClassic:   ['古典衬线', 'classic serif', 'クラシック明朝', '클래식 명조', 'classique', 'clásica', 'klassische Serife'],
+  fEditorial: ['杂志衬线', 'editorial serif', '雑誌風明朝', '잡지풍 명조', 'éditoriale', 'editorial', 'Magazin-Serife'],
+  p_minimal:  ['极简', 'Minimal', 'ミニマル', '미니멀', 'Minimal', 'Minimal', 'Minimal'],
+  p_gallery:  ['画廊', 'Gallery', 'ギャラリー', '갤러리', 'Galerie', 'Galería', 'Galerie'],
+  p_obsidian: ['曜石', 'Obsidian', '黒曜石', '흑요석', 'Obsidienne', 'Obsidiana', 'Obsidian'],
+  p_aurora:   ['极光', 'Aurora', 'オーロラ', '오로라', 'Aurore', 'Aurora', 'Polarlicht'],
+  p_dawn:     ['晨雾', 'Dawn', '朝霧', '새벽 안개', 'Aube', 'Alba', 'Morgendunst'],
+  p_celadon:  ['青瓷', 'Celadon', '青磁', '청자', 'Céladon', 'Celadón', 'Seladon'],
+  needEdit:   ['先改动任意一项，才会生成主题代码。', 'Change any setting first to create a theme code.', 'いずれかの設定を変えるとテーマコードが作られます。', '설정을 하나 바꾸면 테마 코드가 만들어집니다.', 'Modifiez un réglage pour créer un code de thème.', 'Cambia algún ajuste para crear un código de tema.', 'Ändere zuerst eine Einstellung, um einen Themencode zu erzeugen.'],
+  copied:     ['已复制。发给朋友，对方在这里粘贴导入即可。', 'Copied. Send it to a friend; they can paste it here to import.', 'コピーしました。友達に送れば、ここに貼り付けて読み込めます。', '복사했습니다. 친구에게 보내면 여기에 붙여넣어 가져올 수 있습니다.', 'Copié. Envoyez-le à un ami : il pourra le coller ici.', 'Copiado. Envíalo a un amigo y podrá pegarlo aquí.', 'Kopiert. Schick ihn einem Freund, der ihn hier einfügen kann.'],
+  selected:   ['已选中，按 Ctrl+C（Mac 上 ⌘C）复制。', 'Selected. Press Ctrl+C (⌘C on Mac) to copy.', '選択しました。Ctrl+C（Mac は ⌘C）でコピーしてください。', '선택했습니다. Ctrl+C(Mac은 ⌘C)로 복사하세요.', 'Sélectionné. Appuyez sur Ctrl+C (⌘C sur Mac).', 'Seleccionado. Pulsa Ctrl+C (⌘C en Mac).', 'Markiert. Drücke Strg+C (⌘C auf dem Mac).'],
+  imported:   ['已导入并应用。', 'Imported and applied.', '読み込んで適用しました。', '가져와서 적용했습니다.', 'Importé et appliqué.', 'Importado y aplicado.', 'Importiert und angewendet.'],
+  badCode:    ['这段代码无法识别。主题代码以 TG1. 开头，请完整复制后再试。', 'This code is not recognized. Theme codes start with TG1. Copy the whole code and try again.', 'このコードは読み込めません。テーマコードは TG1. で始まります。全体をコピーしてもう一度お試しください。', '이 코드는 인식할 수 없습니다. 테마 코드는 TG1.로 시작합니다. 전체를 복사해 다시 시도하세요.', 'Code non reconnu. Les codes de thème commencent par TG1. Copiez le code en entier et réessayez.', 'Código no reconocido. Los códigos de tema empiezan por TG1. Copia el código completo e inténtalo de nuevo.', 'Code nicht erkannt. Themencodes beginnen mit TG1. Kopiere den ganzen Code und versuche es erneut.'],
+  cleared:    ['已清除自定义。', 'Custom style cleared.', 'カスタムを消去しました。', '사용자 설정을 지웠습니다.', 'Style perso effacé.', 'Estilo personal borrado.', 'Eigener Stil gelöscht.'],
+  secUnit:    ['秒', 's', '秒', '초', 's', 's', 's'],
+  wordUnit:   ['词', 'words', '語', '단어', 'mots', 'palabras', 'Wörter'],
+  sPinyin:    ['拼音', 'Pinyin', 'ピンイン', '병음', 'Pinyin', 'Pinyin', 'Pinyin'],
+  sRomaji:    ['罗马字', 'Romaji', 'ローマ字', '로마자', 'Romaji', 'Romaji', 'Romaji'],
+  sKoRoman:   ['罗马字', 'Romanization', 'ローマ字', '로마자', 'Romanisation', 'Romanización', 'Romanisierung'],
+  perMin:     ['字/分', 'chars/min', '字/分', '자/분', 'car./min', 'car./min', 'Zeichen/Min.'],
+  errAt:      ['{s}s：{n} 处错误', '{s}s: {n} errors', '{s}秒：ミス {n}', '{s}초: 오류 {n}개', '{s} s : {n} erreurs', '{s} s: {n} errores', '{s} s: {n} Fehler'],
+  chartAria:  ['速度随时间变化的折线图', 'Line chart of speed over time', '時間ごとの速度の折れ線グラフ', '시간에 따른 속도 꺾은선 그래프', 'Courbe de vitesse dans le temps', 'Gráfico de velocidad en el tiempo', 'Liniendiagramm des Tempos über die Zeit'],
+
+  /* stats dashboard */
+  stats:      ['统计', 'Stats', '統計', '통계', 'Stats', 'Estadísticas', 'Statistik'],
+  statsTitle: ['我的打字数据', 'Your typing stats', 'あなたのタイピング記録', '내 타자 기록', 'Vos statistiques', 'Tus estadísticas', 'Deine Statistik'],
+  statsNote:  ['数据只保存在这个浏览器里，换设备或清除浏览器数据后会消失。', 'Stored only in this browser. Switching devices or clearing browser data removes it.', 'このブラウザにだけ保存されます。端末を変えたりブラウザのデータを消すと失われます。', '이 브라우저에만 저장됩니다. 기기를 바꾸거나 브라우저 데이터를 지우면 사라집니다.', 'Stockées uniquement dans ce navigateur. Changer d’appareil ou effacer les données du navigateur les supprime.', 'Se guardan solo en este navegador. Cambiar de dispositivo o borrar los datos del navegador las elimina.', 'Nur in diesem Browser gespeichert. Gerätewechsel oder Löschen der Browserdaten entfernt sie.'],
+  back:       ['返回练习', 'Back to practice', '練習に戻る', '연습으로 돌아가기', 'Retour à l’entraînement', 'Volver a practicar', 'Zurück zum Üben'],
+  allLangs:   ['全部', 'All', 'すべて', '전체', 'Toutes', 'Todos', 'Alle'],
+  sTests:     ['练习次数', 'Tests', '練習回数', '연습 횟수', 'Sessions', 'Pruebas', 'Tests'],
+  sTime:      ['总练习时长', 'Time practised', '総練習時間', '총 연습 시간', 'Temps total', 'Tiempo total', 'Übungszeit'],
+  sBest:      ['最高速度', 'Best speed', '最高速度', '최고 속도', 'Meilleure vitesse', 'Mejor velocidad', 'Bestes Tempo'],
+  sAvg10:     ['最近 10 次平均', 'Last 10 average', '直近10回の平均', '최근 10회 평균', 'Moyenne des 10 dernières', 'Media de las 10 últimas', 'Schnitt der letzten 10'],
+  sAcc:       ['平均准确率', 'Average accuracy', '平均正確率', '평균 정확도', 'Précision moyenne', 'Precisión media', 'Ø Genauigkeit'],
+  sChars:     ['累计正确字符', 'Correct characters', '正解した文字数', '맞힌 글자 수', 'Caractères justes', 'Caracteres correctos', 'Richtige Zeichen'],
+  trend:      ['速度趋势（最近 50 次）', 'Speed trend (last 50 tests)', '速度の推移（直近50回）', '속도 추이 (최근 50회)', 'Évolution de la vitesse (50 dernières)', 'Evolución de la velocidad (últimas 50)', 'Tempoverlauf (letzte 50)'],
+  lgTest:     ['单次速度', 'Each test', '各回の速度', '회차별 속도', 'Chaque session', 'Cada prueba', 'Einzelner Test'],
+  lgAvg:      ['5 次移动平均', '5-test average', '5回の移動平均', '5회 이동 평균', 'Moyenne sur 5', 'Media de 5', 'Schnitt über 5'],
+  activity:   ['最近 30 天练习时长（分钟）', 'Practice time, last 30 days (minutes)', '直近30日の練習時間（分）', '최근 30일 연습 시간(분)', 'Temps d’entraînement sur 30 jours (minutes)', 'Tiempo de práctica en 30 días (minutos)', 'Übungszeit der letzten 30 Tage (Minuten)'],
+  byLang:     ['各语言对比', 'By language', '言語別', '언어별', 'Par langue', 'Por idioma', 'Nach Sprache'],
+  misses:     ['最常打错的字符', 'Most-missed characters', 'よく間違える文字', '자주 틀리는 글자', 'Caractères les plus ratés', 'Caracteres más fallados', 'Häufigste Fehlzeichen'],
+  missNote:   ['按应该打的字符统计，空格显示为 ␣。', 'Counted by the character you should have typed. Space shows as ␣.', '本来打つべき文字で集計。スペースは ␣ で表示。', '쳐야 했던 글자 기준으로 셉니다. 띄어쓰기는 ␣로 표시됩니다.', 'Compté selon le caractère attendu. L’espace s’affiche ␣.', 'Contado según el carácter esperado. El espacio se muestra como ␣.', 'Gezählt nach dem erwarteten Zeichen. Leerzeichen erscheint als ␣.'],
+  recent:     ['最近记录', 'Recent tests', '最近の記録', '최근 기록', 'Sessions récentes', 'Pruebas recientes', 'Letzte Tests'],
+  colDate:    ['时间', 'When', '日時', '일시', 'Date', 'Fecha', 'Wann'],
+  colLang:    ['语言', 'Language', '言語', '언어', 'Langue', 'Idioma', 'Sprache'],
+  empty:      ['还没有记录。完成一次练习后，数据会出现在这里。', 'No tests yet. Finish a test and your numbers will show up here.', 'まだ記録がありません。1回練習を終えると、ここに表示されます。', '아직 기록이 없습니다. 연습을 한 번 끝내면 여기에 표시됩니다.', 'Aucune session pour l’instant. Terminez un test pour voir vos chiffres ici.', 'Aún no hay pruebas. Termina una y tus datos aparecerán aquí.', 'Noch keine Tests. Schließe einen Test ab, dann erscheinen hier deine Zahlen.'],
+  copyData:   ['复制全部数据', 'Copy all data', '全データをコピー', '전체 데이터 복사', 'Copier les données', 'Copiar los datos', 'Daten kopieren'],
+  dataCopied: ['已复制全部记录（JSON 格式）。', 'All records copied as JSON.', '全記録を JSON でコピーしました。', '모든 기록을 JSON으로 복사했습니다.', 'Toutes les sessions copiées en JSON.', 'Todos los registros copiados en JSON.', 'Alle Einträge als JSON kopiert.'],
+  clearData:  ['清除全部数据', 'Clear all data', '全データを消去', '전체 데이터 지우기', 'Effacer les données', 'Borrar los datos', 'Alle Daten löschen'],
+  clearAsk:   ['确定清除全部打字记录吗？此操作无法撤销。', 'Delete all typing records? This can’t be undone.', 'すべての記録を消去しますか？元に戻せません。', '모든 기록을 지울까요? 되돌릴 수 없습니다.', 'Supprimer toutes les sessions ? Action irréversible.', '¿Borrar todos los registros? No se puede deshacer.', 'Alle Einträge löschen? Das lässt sich nicht rückgängig machen.'],
+  confirmClear:['确认清除', 'Delete', '消去する', '지우기', 'Supprimer', 'Borrar', 'Löschen'],
+  cancel:     ['取消', 'Cancel', 'キャンセル', '취소', 'Annuler', 'Cancelar', 'Abbrechen'],
+  dataCleared:['已清除。', 'Cleared.', '消去しました。', '지웠습니다.', 'Effacé.', 'Borrado.', 'Gelöscht.'],
+  dur:        ['{h} 小时 {m} 分', '{h} h {m} min', '{h}時間{m}分', '{h}시간 {m}분', '{h} h {m} min', '{h} h {m} min', '{h} Std. {m} Min.'],
+  durM:       ['{m} 分钟', '{m} min', '{m}分', '{m}분', '{m} min', '{m} min', '{m} Min.'],
+
+  /* layout switch */
+  layout:     ['界面', 'Layout', '表示', '화면', 'Affichage', 'Vista', 'Ansicht'],
+  layoutStd:  ['标准', 'Standard', '標準', '표준', 'Standard', 'Estándar', 'Standard'],
+  layoutZen:  ['极简', 'Zen', 'ミニマル', '미니멀', 'Zen', 'Zen', 'Zen'],
 };
 /* Tip shown under the text: TIPS[practiceLanguage] in the interface language */
 const TIPS = {
-  en: ['直接输入英文，空格也算字符。', 'Type the English text. Spaces count as characters.', '英文をそのまま入力します。スペースも1文字です。', '영어 문장을 그대로 입력하세요. 띄어쓰기도 글자로 셉니다.', 'Tapez le texte anglais. Les espaces comptent comme des caractères.', 'Escribe el texto en inglés. Los espacios cuentan como caracteres.'],
-  zh: ['不用输入法，直接打不带声调的拼音，ü 用 v 代替，词与词之间按空格。上方小字是对应的汉字。', 'Type toneless pinyin, no input method needed. Use v for ü and press space between words. The Chinese characters are shown above.', 'IME は使わず、声調なしのピンインを入力します。ü は v、単語の間はスペース。上に漢字が表示されます。', '입력기 없이 성조 없는 병음을 입력하세요. ü는 v로, 단어 사이는 띄어쓰기. 위에 한자가 표시됩니다.', 'Tapez le pinyin sans tons, sans éditeur de saisie. ü s’écrit v, avec une espace entre les mots. Les caractères chinois sont affichés au-dessus.', 'Escribe pinyin sin tonos, sin método de entrada. La ü se escribe v y hay espacio entre palabras. Los caracteres chinos aparecen arriba.'],
-  ja: ['不用输入法，直接打罗马字（长音按假名拼写，如 kyou；ー 用 - ），上方小字是对应的日文。', 'Type romaji, no input method needed. Spell long vowels as in kana (kyou) and type ー as -. The Japanese is shown above.', 'IME は使わず、ローマ字で入力します。長音はかな通り（kyou）、ー は - 。上に日本語が表示されます。', '입력기 없이 로마자로 입력하세요. 장음은 가나대로(kyou), ー는 - 로. 위에 일본어가 표시됩니다.', 'Tapez en romaji, sans éditeur de saisie. Les voyelles longues suivent les kana (kyou), ー s’écrit -. Le japonais est affiché au-dessus.', 'Escribe en romaji, sin método de entrada. Las vocales largas siguen el kana (kyou) y ー se escribe -. El japonés aparece arriba.'],
-  ko: ['不用输入法，直接打韩文的罗马字（韩国国语罗马字标记法），上方小字是对应的韩文。', 'Type Korean in Revised Romanization, no input method needed. The Hangul is shown above.', 'IME は使わず、韓国語をローマ字（国語のローマ字表記法）で入力します。上にハングルが表示されます。', '입력기 없이 국어의 로마자 표기법으로 입력하세요. 위에 한글이 표시됩니다.', 'Tapez le coréen en romanisation révisée, sans éditeur de saisie. Le hangeul est affiché au-dessus.', 'Escribe el coreano en romanización revisada, sin método de entrada. El hangul aparece arriba.'],
-  fr: ['法语有重音字母。默认开启“忽略重音”，é 打 e、ç 打 c 都算对；关掉后需要打出重音。', 'French uses accented letters. “Ignore accents” is on by default, so e counts for é and c for ç. Turn it off to practise accents.', 'フランス語にはアクセント付き文字があります。「アクセント無視」は初期設定でオンなので、é は e、ç は c で正解です。', '프랑스어에는 악센트 문자가 있습니다. ‘악센트 무시’가 기본으로 켜져 있어 é는 e, ç는 c로 쳐도 됩니다.', '« Ignorer les accents » est activé par défaut : e compte pour é, c pour ç. Désactivez-le pour vous entraîner aux accents.', 'El francés tiene letras acentuadas. «Ignorar acentos» está activado: e vale por é y c por ç. Desactívalo para practicar los acentos.'],
-  es: ['西班牙语有 ñ、á 等字母。默认开启“忽略重音”，ñ 打 n 也算对，句首的 ¿ ¡ 会去掉。', 'Spanish uses ñ, á and similar letters. “Ignore accents” is on by default, so n counts for ñ and the opening ¿ ¡ are removed.', 'スペイン語には ñ や á があります。「アクセント無視」がオンなら ñ は n で正解、文頭の ¿ ¡ は省かれます。', '스페인어에는 ñ, á 등이 있습니다. ‘악센트 무시’가 켜져 있으면 ñ는 n으로 쳐도 되고, 문장 앞 ¿ ¡는 빠집니다.', 'L’espagnol utilise ñ, á, etc. Avec « Ignorer les accents », n compte pour ñ et les ¿ ¡ initiaux sont retirés.', '«Ignorar acentos» está activado por defecto: n vale por ñ y se quitan los ¿ ¡ iniciales. Desactívalo para practicar.'],
+  en: ['直接输入英文，空格也算字符。', 'Type the English text. Spaces count as characters.', '英文をそのまま入力します。スペースも1文字です。', '영어 문장을 그대로 입력하세요. 띄어쓰기도 글자로 셉니다.', 'Tapez le texte anglais. Les espaces comptent comme des caractères.', 'Escribe el texto en inglés. Los espacios cuentan como caracteres.', 'Tippe den englischen Text. Leerzeichen zählen als Zeichen.'],
+  zh: ['不用输入法，直接打不带声调的拼音，ü 用 v 代替，词与词之间按空格。上方小字是对应的汉字。', 'Type toneless pinyin, no input method needed. Use v for ü and press space between words. The Chinese characters are shown above.', 'IME は使わず、声調なしのピンインを入力します。ü は v、単語の間はスペース。上に漢字が表示されます。', '입력기 없이 성조 없는 병음을 입력하세요. ü는 v로, 단어 사이는 띄어쓰기. 위에 한자가 표시됩니다.', 'Tapez le pinyin sans tons, sans éditeur de saisie. ü s’écrit v, avec une espace entre les mots. Les caractères chinois sont affichés au-dessus.', 'Escribe pinyin sin tonos, sin método de entrada. La ü se escribe v y hay espacio entre palabras. Los caracteres chinos aparecen arriba.', 'Tippe Pinyin ohne Töne, ganz ohne Eingabemethode. ü schreibst du als v, zwischen Wörtern ein Leerzeichen. Die chinesischen Zeichen stehen darüber.'],
+  ja: ['不用输入法，直接打罗马字（长音按假名拼写，如 kyou；ー 用 - ），上方小字是对应的日文。', 'Type romaji, no input method needed. Spell long vowels as in kana (kyou) and type ー as -. The Japanese is shown above.', 'IME は使わず、ローマ字で入力します。長音はかな通り（kyou）、ー は - 。上に日本語が表示されます。', '입력기 없이 로마자로 입력하세요. 장음은 가나대로(kyou), ー는 - 로. 위에 일본어가 표시됩니다.', 'Tapez en romaji, sans éditeur de saisie. Les voyelles longues suivent les kana (kyou), ー s’écrit -. Le japonais est affiché au-dessus.', 'Escribe en romaji, sin método de entrada. Las vocales largas siguen el kana (kyou) y ー se escribe -. El japonés aparece arriba.', 'Tippe Romaji, ganz ohne Eingabemethode. Lange Vokale wie in Kana (kyou), ー als -. Das Japanische steht darüber.'],
+  ko: ['不用输入法，直接打韩文的罗马字（韩国国语罗马字标记法），上方小字是对应的韩文。', 'Type Korean in Revised Romanization, no input method needed. The Hangul is shown above.', 'IME は使わず、韓国語をローマ字（国語のローマ字表記法）で入力します。上にハングルが表示されます。', '입력기 없이 국어의 로마자 표기법으로 입력하세요. 위에 한글이 표시됩니다.', 'Tapez le coréen en romanisation révisée, sans éditeur de saisie. Le hangeul est affiché au-dessus.', 'Escribe el coreano en romanización revisada, sin método de entrada. El hangul aparece arriba.', 'Tippe Koreanisch in der revidierten Romanisierung, ganz ohne Eingabemethode. Das Hangul steht darüber.'],
+  fr: ['法语有重音字母。默认开启“忽略重音”，é 打 e、ç 打 c 都算对；关掉后需要打出重音。', 'French uses accented letters. “Ignore accents” is on by default, so e counts for é and c for ç. Turn it off to practise accents.', 'フランス語にはアクセント付き文字があります。「アクセント無視」は初期設定でオンなので、é は e、ç は c で正解です。', '프랑스어에는 악센트 문자가 있습니다. ‘악센트 무시’가 기본으로 켜져 있어 é는 e, ç는 c로 쳐도 됩니다.', '« Ignorer les accents » est activé par défaut : e compte pour é, c pour ç. Désactivez-le pour vous entraîner aux accents.', 'El francés tiene letras acentuadas. «Ignorar acentos» está activado: e vale por é y c por ç. Desactívalo para practicar los acentos.', 'Französisch hat Akzentbuchstaben. „Akzente ignorieren“ ist standardmäßig an: e zählt für é, c für ç.'],
+  es: ['西班牙语有 ñ、á 等字母。默认开启“忽略重音”，ñ 打 n 也算对，句首的 ¿ ¡ 会去掉。', 'Spanish uses ñ, á and similar letters. “Ignore accents” is on by default, so n counts for ñ and the opening ¿ ¡ are removed.', 'スペイン語には ñ や á があります。「アクセント無視」がオンなら ñ は n で正解、文頭の ¿ ¡ は省かれます。', '스페인어에는 ñ, á 등이 있습니다. ‘악센트 무시’가 켜져 있으면 ñ는 n으로 쳐도 되고, 문장 앞 ¿ ¡는 빠집니다.', 'L’espagnol utilise ñ, á, etc. Avec « Ignorer les accents », n compte pour ñ et les ¿ ¡ initiaux sont retirés.', '«Ignorar acentos» está activado por defecto: n vale por ñ y se quitan los ¿ ¡ iniciales. Desactívalo para practicar.', 'Spanisch hat ñ, á und ähnliche Buchstaben. Mit „Akzente ignorieren“ zählt n für ñ, und ¿ ¡ am Satzanfang entfallen.'],
+  de: ['德语有 ä、ö、ü、ß。默认开启“忽略重音”，ä 打 a 也算对，ß 会写成 ss；关掉后需要打出原字母。', 'German uses ä, ö, ü and ß. “Ignore accents” is on by default, so a counts for ä and ß is written as ss. Turn it off to practise the real letters.', 'ドイツ語には ä・ö・ü・ß があります。「アクセント無視」がオンなら ä は a で正解、ß は ss と表示されます。', '독일어에는 ä, ö, ü, ß가 있습니다. ‘악센트 무시’가 켜져 있으면 ä는 a로 쳐도 되고 ß는 ss로 바뀝니다.', 'L’allemand utilise ä, ö, ü et ß. Avec « Ignorer les accents », a compte pour ä et ß s’écrit ss.', 'El alemán usa ä, ö, ü y ß. Con «Ignorar acentos», a vale por ä y ß se escribe ss.', '„Akzente ignorieren“ ist standardmäßig an: a zählt für ä, und ß wird als ss geschrieben. Schalte es aus, um Umlaute zu üben.'],
 };
-const UI_IDX = { zh:0, en:1, ja:2, ko:3, fr:4, es:5 };
+const UI_IDX = { zh:0, en:1, ja:2, ko:3, fr:4, es:5, de:6 };
 let uiLang = 'en';
 function t(key, vars) {
   const row = I18N[key]; let s = row ? (row[UI_IDX[uiLang]] || row[1]) : key;
@@ -724,6 +887,7 @@ const LANGS = {
   ko: { name:'한국어', kind:'roman', words:KO, quotes:KO_Q, code:'ko', scheme:'sKoRoman' },
   fr: { name:'Français', kind:'latin', words:FR, quotes:FR_Q, code:'fr', accents:true },
   es: { name:'Español', kind:'latin', words:ES, quotes:ES_Q, code:'es', accents:true },
+  de: { name:'Deutsch', kind:'latin', words:DE, quotes:DE_Q, code:'de', accents:true },
 };
 const TIMES = [15, 30, 60, 90, 120], COUNTS = [10, 25, 50, 100];
 
@@ -748,7 +912,7 @@ const COLOR_KEYS = ['bg', 'fg', 'dim', 'accent', 'error'];
 const CUSTOM_VARS = ['--bg','--fg','--dim','--accent','--error','--surface','--muted','--line','--panel','--panel-border','--error-bg','--accent-ink','--b1','--b2','--b3','--latin','--cjk-sc','--cjk-jp','--cjk-kr','--text-size','color-scheme'];
 
 /* ---------------- settings ---------------- */
-const defaults = { lang:'en', mode:'time', time:30, words:25, fold:true, sound:false, style:'minimal', custom:null, ui:'' };
+const defaults = { lang:'en', mode:'time', time:30, words:25, fold:true, sound:false, style:'minimal', custom:null, ui:'', layout:'std' };
 const settings = Object.assign({}, defaults, store.get('typeglot2-settings', {}));
 if (!(settings.ui in UI_IDX)) settings.ui = detectUi();
 uiLang = settings.ui;
@@ -786,7 +950,7 @@ function speed(units, secs) {
 /* ---------------- elements ---------------- */
 const stage = $('#stage'), wordsEl = $('#words'), inner = $('#inner'), ta = $('#ta'), compEl = $('#comp');
 const liveMain = $('#liveMain'), liveSpeed = $('#liveSpeed'), cfgEl = $('#config'), results = $('#results');
-const drawer = $('#drawer');
+const drawer = $('#drawer'), statsView = $('#statsView');
 const caret = document.createElement('div'); caret.className = 'caret idle';
 
 /* ---------------- test state ---------------- */
@@ -802,9 +966,14 @@ function pick(list, n, prev) {
   }
   return out;
 }
+/* With "ignore accents" on, letters that have no single-key plain form are spelled out (ß → ss). */
+function plainify(text) {
+  if (!(prof.accents && settings.fold)) return text;
+  return text.replace(/[¿¡]/g, '').replace(/ß/g, 'ss').replace(/ẞ/g, 'SS');
+}
 function toWord(item) {
   if (prof.roman) return { text:item.r, hint:item.t };
-  return { text:item, hint:'' };
+  return { text:plainify(item), hint:'' };
 }
 function makeWords(n) {
   const items = pick(prof.L.words, n, test && test.lastPick);
@@ -819,7 +988,7 @@ function makeQuote() {
     used.add(i);
     text += (text ? ' ' : '') + qs[i];
   }
-  if (prof.accents && settings.fold) text = text.replace(/[¿¡]/g, '');
+  text = plainify(text);
   if (prof.roman) return text.split(' ').map(tok => { const [t, r] = tok.split('|'); return { text:r, hint:t }; });
   return text.split(' ').map(w => ({ text:w, hint:'' }));
 }
@@ -833,7 +1002,7 @@ function newTest(reuse) {
   else if (mode === 'quote') list = makeQuote();
   test = {
     mode, words:[], target:'', typed:'', started:false, finished:false, startTime:0,
-    okKeys:0, badKeys:0, rawUnits:0, secRaw:0, secErr:0, secIdx:0, samples:[], lastPick:null
+    okKeys:0, badKeys:0, rawUnits:0, secRaw:0, secErr:0, secIdx:0, samples:[], lastPick:null, misses:{}
   };
   if (!list) list = makeWords(mode === 'time' ? 90 : settings.words);
   charEls = []; scrollPx = 0;
@@ -946,7 +1115,8 @@ function applyTyped(v) {
   for (let i = p; i < v.length; i++) {
     added = true;
     test.rawUnits += 1; test.secRaw += 1;
-    if (eq(v[i], t[i])) test.okKeys++; else { test.badKeys++; test.secErr++; anyBad = true; }
+    if (eq(v[i], t[i])) test.okKeys++;
+    else { test.badKeys++; test.secErr++; anyBad = true; test.misses[t[i]] = (test.misses[t[i]] || 0) + 1; }
   }
   test.typed = v;
   paint(p, Math.max(old.length, v.length));
@@ -993,6 +1163,7 @@ document.addEventListener('keydown', e => {
   if (e.target === ta) return;
   initAudioIfWanted();
   if (!drawer.hidden) { if (e.key === 'Escape') closeDrawer(); return; }
+  if (!statsView.hidden) { if (e.key === 'Escape') closeStats(); return; }
   const tag = (e.target.tagName || '').toLowerCase();
   if (tag === 'input' || tag === 'select' || tag === 'textarea') return;
   if (e.key === 'Tab' && (e.target === document.body || !results.hidden)) { e.preventDefault(); newTest(false); return; }
@@ -1065,6 +1236,13 @@ function finish() {
   const prevBest = bests[key];
   const isRecord = sp > 0 && (!prevBest || sp > prevBest.sp);
   if (isRecord) { bests[key] = { sp:Math.round(sp), acc:Math.round(acc), at:Date.now() }; store.set('typeglot-best2', bests); }
+  if (keys > 0) recordResult({
+    t:Date.now(), lang:settings.lang, mode:test.mode,
+    amt:test.mode === 'time' ? settings.time : test.mode === 'words' ? settings.words : 0,
+    wpm:+sp.toFixed(1), raw:+raw.toFixed(1), acc:+acc.toFixed(1), cons:Math.round(cons),
+    secs:+secs.toFixed(1), ok:okC, bad:badC,
+    cpm:prof.roman ? Math.round(scriptChars / (secs / 60)) : null
+  }, test.misses);
 
   ta.blur(); composing = false; compEl.hidden = true;
   document.body.classList.remove('typing');
@@ -1421,13 +1599,187 @@ function applyI18n() {
     if (test.samples.length) drawChart(test.samples);
   }
   if (!drawer.hidden) fillDrawer();
+  if (!statsView.hidden) renderStats();
   requestAnimationFrame(() => requestAnimationFrame(layout));
 }
 uiSel.addEventListener('change', () => {
   settings.ui = uiSel.value; save(); applyI18n();
 });
 
-applyAppearance(); renderSound(); applyI18n(); newTest(false);
+/* ---------------- layout switch: standard / zen ---------------- */
+function applyLayout() {
+  const zen = settings.layout === 'zen';
+  document.documentElement.dataset.layout = zen ? 'zen' : 'std';
+  $('#layout-std').setAttribute('aria-pressed', String(!zen));
+  $('#layout-zen').setAttribute('aria-pressed', String(zen));
+  requestAnimationFrame(() => requestAnimationFrame(layout));
+}
+['std', 'zen'].forEach(v => $('#layout-' + v).addEventListener('click', () => {
+  settings.layout = v; save(); applyLayout(); if (statsView.hidden) focusInput();
+}));
+
+/* ---------------- local stats (per language) ---------------- */
+const HKEY = 'glotkey-history', MKEY = 'glotkey-misses';
+let statsLang = 'all';
+function recordResult(rec, misses) {
+  const h = store.get(HKEY, []);
+  h.push(rec);
+  if (h.length > 2000) h.splice(0, h.length - 2000);
+  store.set(HKEY, h);
+  const m = store.get(MKEY, {});
+  const lm = m[rec.lang] || (m[rec.lang] = {});
+  for (const ch in misses) lm[ch] = (lm[ch] || 0) + misses[ch];
+  store.set(MKEY, m);
+}
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+const avg = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : 0;
+function fmtDur(secs) {
+  const m = Math.round(secs / 60), h = Math.floor(m / 60);
+  return h ? t('dur', { h, m:m % 60 }) : t('durM', { m });
+}
+function recSetup(r) {
+  return r.mode === 'time' ? `${r.amt} ${t('secUnit')}` : r.mode === 'words' ? `${r.amt} ${t('wordUnit')}` : t('mQuote');
+}
+function fmtDate(ts) {
+  try { return new Date(ts).toLocaleString(UI_HTML_LANG[uiLang], { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }); }
+  catch (e) { return new Date(ts).toISOString().slice(5, 16).replace('T', ' '); }
+}
+function trendChart(list) {
+  const W = 640, H = 210, L = 38, R = 12, T = 12, B = 24, n = list.length;
+  const vals = list.map(r => r.wpm);
+  const ma = vals.map((_, i) => avg(vals.slice(Math.max(0, i - 4), i + 1)));
+  const maxY = niceMax(Math.max(...vals, 10) * 1.08);
+  const x = i => n === 1 ? (L + W - R) / 2 : L + i / (n - 1) * (W - L - R);
+  const y = v => T + (1 - v / maxY) * (H - T - B);
+  let g = '';
+  for (let k = 0; k <= 4; k++) {
+    const v = maxY * k / 4, yy = y(v).toFixed(1);
+    g += `<line class="gl" x1="${L}" x2="${W - R}" y1="${yy}" y2="${yy}"/><text class="ax" x="${L - 7}" y="${+yy + 4}" text-anchor="end">${Math.round(v)}</text>`;
+  }
+  const step = n <= 10 ? 1 : n <= 25 ? 5 : 10;
+  for (let i = 0; i < n; i += step) g += `<text class="ax" x="${x(i).toFixed(1)}" y="${H - 6}" text-anchor="middle">${i + 1}</text>`;
+  const pts = vals.map((v, i) => `<circle class="pt" cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="3.5"><title>${esc(fmtDate(list[i].t))} · ${Math.round(v)} WPM</title></circle>`).join('');
+  const line = n > 1 ? `<path class="ma" d="${ma.map((v, i) => (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(v).toFixed(1)).join(' ')}"/>` : '';
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(t('trend'))}">${g}${pts}${line}</svg>`;
+}
+function activityChart(list) {
+  const days = 30, W = 640, H = 150, L = 30, R = 8, T = 10, B = 22;
+  const start = new Date(); start.setHours(0, 0, 0, 0); start.setDate(start.getDate() - (days - 1));
+  const mins = new Array(days).fill(0);
+  list.forEach(r => { const d = Math.floor((r.t - start.getTime()) / 864e5); if (d >= 0 && d < days) mins[d] += r.secs / 60; });
+  const maxY = niceMax(Math.max(...mins, 5));
+  const bw = (W - L - R) / days;
+  const y = v => T + (1 - v / maxY) * (H - T - B);
+  let g = '';
+  for (let k = 0; k <= 2; k++) {
+    const v = maxY * k / 2, yy = y(v).toFixed(1);
+    g += `<line class="gl" x1="${L}" x2="${W - R}" y1="${yy}" y2="${yy}"/><text class="ax" x="${L - 6}" y="${+yy + 4}" text-anchor="end">${Math.round(v)}</text>`;
+  }
+  mins.forEach((m, i) => {
+    const d = new Date(start.getTime() + i * 864e5);
+    const h = Math.max(m > 0 ? 2 : 1.5, y(0) - y(m));
+    g += `<rect class="bar${m > 0 ? '' : ' zero'}" x="${(L + i * bw + 1.5).toFixed(1)}" y="${(y(0) - h).toFixed(1)}" width="${(bw - 3).toFixed(1)}" height="${h.toFixed(1)}" rx="1.5"><title>${d.getMonth() + 1}/${d.getDate()} · ${m.toFixed(1)}</title></rect>`;
+    if ((i % 7 === 0 && days - 1 - i >= 4) || i === days - 1) g += `<text class="ax" x="${(L + i * bw + bw / 2).toFixed(1)}" y="${H - 5}" text-anchor="middle">${d.getMonth() + 1}/${d.getDate()}</text>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(t('activity'))}">${g}</svg>`;
+}
+function tilesHtml(list) {
+  const last10 = list.slice(-10);
+  const tile = (k, v, hi) => `<div class="tile${hi ? ' hi' : ''}"><span class="k">${esc(t(k))}</span><span class="v">${v}</span></div>`;
+  return `<div class="tiles">
+    ${tile('sBest', `${Math.round(Math.max(...list.map(r => r.wpm)))}<small>WPM</small>`, true)}
+    ${tile('sAvg10', `${Math.round(avg(last10.map(r => r.wpm)))}<small>WPM</small>`)}
+    ${tile('sAcc', `${Math.round(avg(list.map(r => r.acc)))}<small>%</small>`)}
+    ${tile('sTests', list.length)}
+    ${tile('sTime', esc(fmtDur(list.reduce((s, r) => s + r.secs, 0))))}
+    ${tile('sChars', list.reduce((s, r) => s + r.ok, 0).toLocaleString())}
+  </div>`;
+}
+function renderStats() {
+  const all = store.get(HKEY, []);
+  const counts = {}; all.forEach(r => { counts[r.lang] = (counts[r.lang] || 0) + 1; });
+  const tabs = $('#svTabs'); tabs.textContent = '';
+  [['all', t('allLangs'), all.length]].concat(Object.keys(LANGS).map(k => [k, LANGS[k].name, counts[k] || 0])).forEach(([k, name, n]) => {
+    const b = document.createElement('button'); b.type = 'button'; b.id = 'svtab-' + k;
+    b.setAttribute('role', 'tab'); b.setAttribute('aria-selected', String(statsLang === k));
+    b.innerHTML = `${esc(name)}<small>${n}</small>`;
+    b.addEventListener('click', () => { statsLang = k; renderStats(); });
+    tabs.appendChild(b);
+  });
+  const body = $('#svBody');
+  const list = statsLang === 'all' ? all : all.filter(r => r.lang === statsLang);
+  if (!list.length) { body.innerHTML = `<p class="sv-empty">${esc(t('empty'))}</p>`; return; }
+
+  const m = store.get(MKEY, {});
+  const merged = {};
+  (statsLang === 'all' ? Object.values(m) : [m[statsLang] || {}]).forEach(o => { for (const c in o) merged[c] = (merged[c] || 0) + o[c]; });
+  const top = Object.entries(merged).sort((a, b) => b[1] - a[1]).slice(0, 14);
+  const missHtml = top.length
+    ? `<div class="miss-list">${top.map(([c, n]) => `<span class="miss"><b>${c === ' ' ? '␣' : esc(c)}</b><span>×${n}</span></span>`).join('')}</div><p class="note">${esc(t('missNote'))}</p>`
+    : `<p class="note">—</p>`;
+
+  let langTable = '';
+  if (statsLang === 'all') {
+    const rows = Object.keys(LANGS).map(k => [k, all.filter(r => r.lang === k)]).filter(x => x[1].length);
+    const top = Math.max(...rows.map(([, l]) => Math.max(...l.map(r => r.wpm))), 1);
+    langTable = `<div class="card"><h3>${esc(t('byLang'))}</h3><div class="tbl-wrap"><table class="sv-table">
+      <thead><tr><th>${esc(t('colLang'))}</th><th class="num">${esc(t('sBest'))}</th><th class="num">${esc(t('sAvg10'))}</th><th class="num">${esc(t('sAcc'))}</th><th class="num">${esc(t('sTests'))}</th><th class="num">${esc(t('sTime'))}</th></tr></thead>
+      <tbody>${rows.map(([k, l]) => { const b = Math.max(...l.map(r => r.wpm)); return `<tr>
+        <td>${esc(LANGS[k].name)}</td>
+        <td class="num">${Math.round(b)}<span class="meter"><i style="width:${(b / top * 100).toFixed(0)}%"></i></span></td>
+        <td class="num">${Math.round(avg(l.slice(-10).map(r => r.wpm)))}</td>
+        <td class="num">${Math.round(avg(l.map(r => r.acc)))}%</td>
+        <td class="num">${l.length}</td>
+        <td class="num">${esc(fmtDur(l.reduce((s, r) => s + r.secs, 0)))}</td></tr>`; }).join('')}</tbody></table></div></div>`;
+  }
+
+  const recent = list.slice(-10).reverse();
+  const recentHtml = `<div class="card"><h3>${esc(t('recent'))}</h3><div class="tbl-wrap"><table class="sv-table">
+    <thead><tr><th>${esc(t('colDate'))}</th>${statsLang === 'all' ? `<th>${esc(t('colLang'))}</th>` : ''}<th>${esc(t('setup'))}</th><th class="num">WPM</th><th class="num">${esc(t('accuracy'))}</th></tr></thead>
+    <tbody>${recent.map(r => `<tr><td>${esc(fmtDate(r.t))}</td>${statsLang === 'all' ? `<td>${esc((LANGS[r.lang] || {}).name || r.lang)}</td>` : ''}<td>${esc(recSetup(r))}</td><td class="num">${Math.round(r.wpm)}</td><td class="num">${Math.round(r.acc)}%</td></tr>`).join('')}</tbody></table></div></div>`;
+
+  body.innerHTML = `${tilesHtml(list)}
+    <div class="sv-grid">
+      <div class="card"><h3>${esc(t('trend'))}</h3><div class="svchart">${trendChart(list.slice(-50))}</div>
+        <div class="legend"><span><i style="opacity:.45;width:8px;height:8px;border-radius:50%"></i>${esc(t('lgTest'))}</span><span><i></i>${esc(t('lgAvg'))}</span></div></div>
+      <div class="card"><h3>${esc(t('misses'))}</h3>${missHtml}</div>
+    </div>
+    <div class="card"><h3>${esc(t('activity'))}</h3><div class="svchart">${activityChart(list)}</div></div>
+    ${langTable}
+    ${recentHtml}`;
+}
+const statsBtn = $('#statsBtn');
+function openStats() {
+  if (test && test.started && !test.finished) newTest(true);
+  ta.blur(); clearInterval(timer); timer = null;
+  stage.hidden = true; results.hidden = true; $('#tip').hidden = true; cfgEl.hidden = true;
+  statsView.hidden = false; statsBtn.setAttribute('aria-pressed', 'true');
+  $('#svConfirm').hidden = true; $('#svDump').hidden = true; $('#svMsg').textContent = '';
+  if (statsLang !== 'all' && !LANGS[statsLang]) statsLang = 'all';
+  renderStats();
+  window.scrollTo(0, 0);
+}
+function closeStats() {
+  statsView.hidden = true; statsBtn.setAttribute('aria-pressed', 'false'); cfgEl.hidden = false;
+  if (test && test.finished) results.hidden = false;
+  else { stage.hidden = false; $('#tip').hidden = false; layout(); focusInput(); }
+}
+statsBtn.addEventListener('click', () => statsView.hidden ? openStats() : closeStats());
+$('#statsBack').addEventListener('click', closeStats);
+$('#svCopy').addEventListener('click', () => {
+  const dump = JSON.stringify({ app:'Glotkey', exported:new Date().toISOString(), history:store.get(HKEY, []), misses:store.get(MKEY, {}) });
+  const area = $('#svDump'), say = s => { $('#svMsg').textContent = s; };
+  const fallback = () => { area.hidden = false; area.value = dump; area.focus(); area.select(); say(t('selected')); };
+  try { navigator.clipboard.writeText(dump).then(() => { area.hidden = true; say(t('dataCopied')); }, fallback); } catch (e) { fallback(); }
+});
+$('#svClear').addEventListener('click', () => { $('#svConfirm').hidden = false; $('#svMsg').textContent = ''; });
+$('#svClearNo').addEventListener('click', () => { $('#svConfirm').hidden = true; });
+$('#svClearYes').addEventListener('click', () => {
+  try { localStorage.removeItem(HKEY); localStorage.removeItem(MKEY); localStorage.removeItem('typeglot-best2'); } catch (e) {}
+  $('#svConfirm').hidden = true; $('#svMsg').textContent = t('dataCleared'); renderStats();
+});
+
+applyAppearance(); renderSound(); applyLayout(); applyI18n(); newTest(false);
 })();
 </script>
 </body>

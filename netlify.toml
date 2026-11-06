@@ -1,0 +1,3 @@
+# Glotkey is a static page: no build command, just publish the site/ folder.
+[build]
+  publish = "site"
